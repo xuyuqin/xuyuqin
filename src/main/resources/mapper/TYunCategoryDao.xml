@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunCategoryDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunCategoryEntity" id="tYunCategoryMap">
+        <result property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="parent" column="PARENT"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunCategoryEntity">
+		select * from T_YUN_CATEGORY where ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yun.entity.TYunCategoryEntity">
+		select * ,(case
+					when parent is not null then parent
+					else id
+					end)orderflag
+		from T_YUN_CATEGORY
+		where 1 = 1
+		<if test="type != null and type.trim() != ''">
+			<choose>
+				<when test="type.trim() == '0'.toString()">
+					and parent is null
+				</when>
+				<when test="type.trim() == '1'.toString()">
+					and parent is not null
+				</when>
+				<otherwise>
+					and parent = #{type}
+				</otherwise>
+			</choose>
+		</if>
+		order by id,orderflag
+		<!--<if test="offset != null and limit != null">-->
+			<!--limit #{offset}, #{limit}-->
+		<!--</if>-->
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_CATEGORY 
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunCategoryEntity">
+		insert into T_YUN_CATEGORY
+		(
+			`ID`, 
+			`NAME`, 
+			`PARENT`
+		)
+		values
+		(
+			#{id}, 
+			#{name}, 
+			#{parent}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunCategoryEntity">
+		update T_YUN_CATEGORY 
+		<set>
+			<if test="name != null">`NAME` = #{name}, </if>
+			<if test="parent != null">`PARENT` = #{parent}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_CATEGORY where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_CATEGORY where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,50 @@
+*{
+  font-family: "Helvetica Neue","Luxi Sans","DejaVu Sans",Tahoma,"Hiragino Sans GB",STHeiti,"Microsoft YaHei";
+}
+.mallLabel{
+  white-space: nowrap;
+}
+#mallForm{
+  border: 2px solid #D1CCC7;
+  padding: 10px 0;
+}
+#lookingGoods{
+  text-align: center;
+  color: #FFFFFF;
+  background: #EFAD4D;
+  border: 0;
+  border-radius: 0;
+}
+.goodsImg{
+  max-height: 200px
+}
+.particularList{
+    padding: 10px 0
+}
+.particularList div{
+    /*display: inline-flex;*/
+    width: 45%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.particularList div:first-child{
+  float: left;
+  margin-right: 5%;
+}
+.mallMoney span{
+  font-size: 3rem;
+  color: #d9534f;
+}
+
+.mallButton button{
+  color: #FFFFFF;
+  background: #EFAD4D;
+  border: 0;
+  border-radius: 0;
+}
+.sign span{
+  position: absolute;
+  top: -3%;
+  right: 1%;
+}

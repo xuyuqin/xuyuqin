@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.unicall.bgyun.dao.BgTYunProductDao">
+
+   <resultMap type="HashMap" id="tYunProductMap">
+        <result property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="category" column="CATEGORY"/>
+        <result property="variety" column="VARIETY"/>
+         <result property="alias" column="ALIAS"/>     
+        <result property="price" column="PRICE"/>      
+        <result property="editTime" column="EDIT_TIME"/>      
+    </resultMap>
+    
+   <resultMap type="HashMap" id="tYunProductDetailMap">
+        <result property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="category" column="CATEGORY"/>
+        <result property="variety" column="VARIETY"/>
+        <result property="alias" column="ALIAS"/>     
+        <result property="upstream" column="UPSTREAM"/>              
+        <result property="price" column="PRICE"/>  
+        <result property="material" column="MATERIAL"/>  
+        <result property="unit" column="UNIT"/>             
+        <result property="url" column="URL"/>      
+        <result property="editTime" column="EDITTIME"/>      
+    </resultMap>
+    
+   <resultMap type="HashMap" id="queryCategoryMap">
+        <result property="text" column="TEXT"/>
+        <result property="value" column="VALUE"/>
+    </resultMap>
+   <resultMap type="HashMap" id="queryVarietyMap">
+        <result property="text" column="TEXT"/>
+        <result property="value" column="VALUE"/>
+    </resultMap>
+
+
+
+	
+    <select id="queryCategory" resultMap="queryCategoryMap">
+     
+	      select c.id as id,c.NAME as text, c.NAME as value from T_YUN_CATEGORY c
+	         where c.PARENT is null
+	</select>
+    <select id="queryVariety" resultMap="queryVarietyMap">
+     
+	      select  c.id as id,c.NAME as text, c.NAME as value from T_YUN_CATEGORY c
+	          where c.PARENT is not null
+	</select>
+
+
+	
+	<select id="queryList" resultType="io.yun.entity.TYunProductEntity">
+        <!--  SELECT  p.ID, p.NAME as name ,p.NAME as category ,pp.NAME as subCategory, p.PRICE as price, 
+         p.EDIT_TIME as edit_time FROM T_YUN_PRODUCT p
+            LEFT JOIN T_YUN_PRODUCT_CATEGORY c ON c.CATEGORY_ID = p.SUB_CATEGORY_ID
+            LEFT JOIN T_YUN_PRODUCT pp ON pp.ID = c.PRODUCT_ID
+          where 1=1 -->
+        select  p.ID as id , p.NAME as name, p.CATEGORYNAME as categoryName ,p.SUBCATEGORYNAME as subCategoryName,p.ALIAS_NAME as aliasName, p.PRICE as price ,p.EDIT_TIME as editTime from T_YUN_PRODUCT p
+		    where 1=1
+		    
+	  
+ 	 	<if test="keyWord != null and keyWord.trim() != ''">
+			and   
+			 (
+			         p.NAME like CONCAT(CONCAT('%', #{keyWord}),'%') 
+			         or 
+			         p.ID LIKE CONCAT(CONCAT('%', #{keyWord}),'%') 
+			       
+			  )  
+		</if>
+
+		<if test="category != null and category.trim()!=''">
+			and p.CATEGORYNAME = #{categoryNamne}
+		</if>
+		
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+		
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by ${sidx} ${order}
+			</when>
+		
+		</choose>
+		
+
+	</select>
+	
+	<select id="queryTotal" resultType="int">
+		<!--   SELECT  count(*) FROM T_YUN_PRODUCT p
+            LEFT JOIN T_YUN_PRODUCT_CATEGORY c ON c.CATEGORY_ID = p.SUB_CATEGORY_ID
+            LEFT JOIN T_YUN_PRODUCT pp ON pp.ID = c.PRODUCT_ID
+		       where 1=1 -->
+        select  count(*) from T_YUN_PRODUCT p
+		    where 1=1
+		       
+	  	<if test="keyWord != null and keyWord.trim() != ''">
+			and   
+			 (
+			         p.NAME like CONCAT(CONCAT('%', #{keyWord}),'%') 
+			         or 
+			         p.ID LIKE CONCAT(CONCAT('%', #{keyWord}),'%') 
+			       
+			     )      
+		</if>
+
+		<if test="category != null and category.trim()!=''">
+			and p.CATEGORYNAME = #{categoryname}
+		</if>
+	</select>
+	
+	<select id="queryObject" resultType="io.unicall.bgyun.entity.BgTYunProductEntity">
+     <!-- SELECT  p.ID, p.NAME as name ,p.NAME as category ,pp.NAME as subCategory, p.PRICE as price,
+      p.EDIT_TIME as edit_time,i.URL as url  FROM T_YUN_PRODUCT p
+            LEFT JOIN T_YUN_PRODUCT_CATEGORY c ON c.CATEGORY_ID = p.SUB_CATEGORY_ID
+            LEFT JOIN T_YUN_PRODUCT pp ON pp.ID = c.PRODUCT_ID
+            LEFT JOIN T_YUN_PRODUCT_IMAGE i ON i.PRODUCT_ID = p.ID
+		    where p.ID = #{id} -->
+	  <!--  select  p.NAME ,  cc. NAME as category ,c.NAME as variety,p.PRICE ,p.EDIT_TIME ,p.MATERIAL, p.UNIT, i.URL as url from T_YUN_PRODUCT p
+		    LEFT JOIN  T_YUN_CATEGORY c on c.ID = p.SUB_CATEGORY_ID
+		    LEFT JOIN  T_YUN_CATEGORY cc on c.PARENT = cc.ID
+		    LEFT JOIN  T_YUN_PRODUCT_IMAGE i ON i.PRODUCT_ID = p.ID
+		 where p.ID = #{id} -->
+		  select   p.ID as id,p.`NAME` as name,p.CATEGORYNAME as cName,p.SUBCATEGORYNAME as sCName,p.ALIAS_NAME as aliasName,
+		  p.UP_NAME as upName,p.PRICE as price,p.MATERIAL material,p.UNIT as unit,i.URL as url,p.EDIT_TIME editTime from T_YUN_PRODUCT p
+		      LEFT JOIN  T_YUN_PRODUCT_IMAGE i ON i.PRODUCT_ID = p.ID
+		      where p.ID = #{id}
+	</select>
+	
+
+	
+	<delete id="deleteProduct">
+		delete from T_YUN_PRODUCT where ID = #{id}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_PRODUCT where ID in 
+		<foreach item="ids" collection="array" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+		;
+		delete from T_YUN_PRODUCT_IMAGE where ID in 
+		<foreach item="ids" collection="array" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+	</delete>
+	
+	
+	
+	<insert id="save" parameterType="io.unicall.bgyun.entity.BgTYunProductEntity" >
+	   <!--  <selectKey keyProperty="id" resultType="java.lang.String"
+				   order="BEFORE">
+			select replace(uuid(),'-','') from dual
+		</selectKey> -->
+		
+		
+		insert into T_YUN_PRODUCT
+		(
+			`ID`, 
+			`CATEGORYNAME`,
+			`SUBCATEGORYNAME`, 
+			`EDIT_TIME`,
+			`NAME`,
+			`UP_NAME`,
+			`ALIAS_NAME`,
+			`MATERIAL`, 
+			`UNIT`, 
+			`PRICE`, 
+			`HOT_SEARCH`
+
+		)
+		values
+		(
+			#{id}, 
+			#{cName}, 
+			#{sCName}, 
+			#{editTime}, 
+			#{name},
+			#{upName},
+			#{aliasName},
+			#{material}, 
+			#{unit}, 
+			#{price}, 
+			#{hotSearch}		
+			
+		)
+		<selectKey keyProperty="id" resultType="int" order="AFTER">
+            select LAST_INSERT_ID() 
+        </selectKey>
+
+	</insert>
+	
+	<insert id="saveImage" parameterType="io.yun.entity.TYunProductImageEntity" >
+	   insert into T_YUN_PRODUCT_IMAGE
+		(
+			`id`, 
+			`PRODUCT_ID`,
+			`URL`
+
+		)
+		values
+		(
+			#{id}, 
+			#{productId}, 
+			#{url}
+			
+		)
+	</insert>
+	
+	
+	<update id="update" parameterType="io.unicall.bgyun.entity.BgTYunProductEntity">
+		update T_YUN_PRODUCT 
+		<set> 
+			<if test="name != null">`NAME` = #{name}, </if>
+			<if test="cName != null">`CATEGORYNAME` = #{cName}, </if>
+			<if test="sCName != null">`SUBCATEGORYNAME` = #{sCName}, </if>
+			<if test="aliasName != null">`ALIAS_NAME` = #{aliasName}, </if>
+			<if test="upName != null">`UP_NAME` = #{upName}, </if>
+			<if test="price != null">`PRICE` = #{price}, </if>
+			<if test="material != null">`MATERIAL` = #{material}, </if>
+			<if test="unit != null">`UNIT` = #{unit}, </if>
+		</set>
+		where ID = #{id}; 
+
+
+	
+		update T_YUN_PRODUCT_IMAGE
+		<set> 
+			<if test="url != null">`URL` = #{url}, </if>
+		</set>
+		where PRODUCT_ID = #{id} 
+	
+	</update>
+	
+
+</mapper>

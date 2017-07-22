@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.unicall.bgyun.dao.BgTYunDemandDao">
+
+	     <!-- 可根据自己的需求，是否要使用 -->
+ <!--    <resultMap type="io.yun.entity.TYunDemandEntity" id="tYunDemandMap">
+        <result property="id" column="ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="category" column="CATEGORY"/>
+        <result property="subCategory" column="SUB_CATEGORY"/>
+        <result property="productId" column="PRODUCT_ID"/>
+        <result property="amount" column="AMOUNT"/>
+        <result property="specification" column="SPECIFICATION"/>
+        <result property="material" column="MATERIAL"/>
+        <result property="district" column="DISTRICT"/>
+        <result property="providerId" column="PROVIDER_ID"/>
+        <result property="companyName" column="COMPANY_NAME"/>
+        <result property="contract" column="CONTRACT"/>
+        <result property="phone" column="PHONE"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="productBuy" column="PRODUCT_BUY"/>
+        <result property="productName" column="PRODUCT_NAME"/>
+        <result property="providerName" column="PROVIDER_NAME"/>
+        <result property="name" column="NAME"/>
+        <result property="replyCount" column="REPLY_COUNT"/>
+        <result property="validity" column="validity"/>
+        <result property="remarks" column="REMARKS"/>
+        <association property="TYunDemandReply" javaType="io.yun.entity.TYunDemandReplyEntity">  
+            <result property="price" column="PRICE" />  
+            <result property="contact" column="CONTACT"/>
+            <result property="phone" column="PHONE"/> 
+        </association>   
+    </resultMap>   -->
+        
+        
+    <resultMap type="HashMap" id="tYunDemand_REPLYMap">
+        <result property="id" column="ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="category" column="CATEGORY"/>
+        <result property="subCategory" column="SUB_CATEGORY"/>
+        <result property="productId" column="PRODUCT_ID"/>
+        <result property="amount" column="AMOUNT"/>
+        <result property="specification" column="SPECIFICATION"/>
+        <result property="material" column="MATERIAL"/>
+        <result property="district" column="DISTRICT"/>
+        <result property="providerId" column="PROVIDER_ID"/>
+        <result property="companyName" column="COMPANY_NAME"/>
+        <result property="contract" column="CONTRACT"/>
+        <result property="phone" column="PHONE"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="productBuy" column="PRODUCT_BUY"/>
+        <result property="productName" column="PRODUCT_NAME"/>
+        <result property="providerName" column="PROVIDER_NAME"/>
+        <result property="name" column="NAME"/>
+        <result property="isPermit" column="IS_PERMIT"/> 
+        <result property="replyCount" column="REPLY_COUNT"/>
+        <result property="validity" column="validity"/>
+        <result property="remarks" column="REMARKS"/>
+        <result property="reply_price" column="REPLY_PRICE" />  
+        <result property="reply_contact" column="REPLY_CONTACT"/>
+        <result property="reply_phone" column="REPLY_PHONE"/> 
+        <result property="reply_remarks" column="REPLY_REMARKS"/> 
+        
+        
+    </resultMap>
+
+
+	<select id="queryMyList" resultType="io.yun.entity.TYunDemandEntity">
+		select * from T_YUN_DEMAND d
+		   left join sys_register r on r.id = d.MEMBER_ID
+		   where r.trader = ${traderId}
+  
+ 	 	<if test="keyWord != null and keyWord.trim() != ''">
+			and 
+			    (
+			         d.PRODUCT_NAME like CONCAT(CONCAT('%', #{keyWord}),'%')
+			         or 
+			         d.NAME LIKE CONCAT(CONCAT('%', #{keyWord}),'%') 
+			       
+			     )
+		</if>
+		
+	
+		<if test="isPermit != null and isPermit.trim()!=''">
+			and d.IS_PERMIT = #{isPermit}
+		</if>
+		<if test="time1 != null and time1.trim() != ''">
+			and CREATE_TIME &gt;=#{timeBegin}
+		</if>
+		<if test="time2 != null and time2.trim() != ''">
+			and CREATE_TIME &lt;= #{timeEnd}
+		</if>
+
+		<choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            
+			<otherwise>
+                order by d.ID desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+	<select id="queryMyTotal" resultType="int">
+		select count(*) from T_YUN_DEMAND d
+		   left join sys_register r on r.id = d.MEMBER_ID
+		   where r.trader = ${traderId}
+		
+		   
+		<if test="keyWord != null and keyWord.trim() != ''">
+			and 
+			    (
+			         d.PRODUCT_NAME like CONCAT(CONCAT('%', #{keyWord}),'%')
+			         or 
+			         d.NAME LIKE CONCAT(CONCAT('%', #{keyWord}),'%') 
+			       
+			     )
+		</if>
+
+		<if test="isPermit != null and isPermit.trim()!=''">
+			and d.IS_PERMIT = #{isPermit}
+		</if>
+		<if test="time1 != null and time1.trim() != ''">
+			and CREATE_TIME &gt;=#{timeBegin}
+		</if>
+		<if test="time2 != null and time2.trim() != ''">
+			and CREATE_TIME &lt;= #{timeEnd}
+		</if>
+
+		   
+	</select>
+	
+	
+	<select id="queryList" resultType="io.yun.entity.TYunDemandEntity">
+		select * from T_YUN_DEMAND d
+		where 1=1
+  
+ 	 	<if test="keyWord != null and keyWord.trim() != ''">
+			and 
+			    (
+			         d.PRODUCT_NAME like CONCAT(CONCAT('%', #{keyWord}),'%')
+			         or 
+			         d.NAME LIKE CONCAT(CONCAT('%', #{keyWord}),'%') 
+			       
+			     )
+		</if>
+
+		<if test="isPermit != null and isPermit.trim()!=''">
+			and d.IS_PERMIT = #{isPermit}
+		</if>
+		<if test="time1 != null and time1.trim() != ''">
+			and CREATE_TIME &gt;=#{timeBegin}
+		</if>
+		<if test="time2 != null and time2.trim() != ''">
+			and CREATE_TIME &lt;= #{timeEnd}
+		</if>
+
+		<choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_DEMAND d
+		where 1=1
+		
+		
+		
+	   <if test="keyWord != null and keyWord.trim() != ''">
+			and 
+			    (
+			         d.PRODUCT_NAME like CONCAT(CONCAT('%', #{keyWord}),'%')
+			         or 
+			         d.NAME LIKE CONCAT(CONCAT('%', #{keyWord}),'%') 
+			       
+			     )
+		</if>
+
+		<if test="isPermit != null and isPermit.trim()!=''">
+			and d.IS_PERMIT = #{isPermit}
+		</if>
+		<if test="time1 != null and time1.trim() != ''">
+			and CREATE_TIME &gt;=#{timeBegin}
+		</if>
+		<if test="time2 != null and time2.trim() != ''">
+			and CREATE_TIME &lt;= #{timeEnd}
+		</if>
+		
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by ${sidx} ${order}
+			</when>
+
+		</choose>
+		
+	</select>
+	
+	
+	<select id="queryObject" resultMap="tYunDemand_REPLYMap">
+      select d.*,dr.CONTRACT as reply_contact,dr.PRICE as reply_price,dr.PHONE as replay_phone,dr.remarks as reply_remarks
+		  from T_YUN_DEMAND d		   
+		    LEFT JOIN T_YUN_DEMAND_REPLY dr on dr.DEMAND_ID = d.ID
+		    where d.ID = #{id}
+	</select>
+
+
+	<!-- <update id="update" parameterType="io.yun.entity.TYunDemandEntity">
+		update T_YUN_DEMAND 
+		<set>
+			<if test="memberId != null">`MEMBER_ID` = #{memberId}, </if>
+			<if test="category != null">`CATEGORY` = #{category}, </if>
+			<if test="subCategory != null">`SUB_CATEGORY` = #{subCategory}, </if>
+			<if test="productId != null">`PRODUCT_ID` = #{productId}, </if>
+			<if test="amount != null">`AMOUNT` = #{amount}, </if>
+			<if test="specification != null">`SPECIFICATION` = #{specification}, </if>
+			<if test="material != null">`MATERIAL` = #{material}, </if>
+			<if test="district != null">`DISTRICT` = #{district}, </if>
+			<if test="providerId != null">`PROVIDER_ID` = #{providerId}, </if>
+			<if test="companyName != null">`COMPANY_NAME` = #{companyName}, </if>
+			<if test="contract != null">`CONTRACT` = #{contract}, </if>
+			<if test="phone != null">`PHONE` = #{phone}, </if>
+			<if test="createTime != null">`CREATE_TIME` = #{createTime}, </if>
+			<if test="productBuy != null">`PRODUCT_BUY` = #{productBuy}, </if>
+			<if test="productName != null">`PRODUCT_NAME` = #{productName}, </if>
+			<if test="providerName != null">`PROVIDER_NAME` = #{providerName}, </if>
+			<if test="name != null">`NAME` = #{name}, </if>
+			<if test="replyCount != null">`REPLY_COUNT` = #{replyCount}, </if>
+			<if test="validity != null">`validity` = #{validity}, </if>
+			<if test="remarks != null">`REMARKS` = #{remarks}</if>
+		</set>
+		where ID = #{id}
+	</update>  -->
+	
+
+	
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_DEMAND where ID in 
+		<foreach item="ids" collection="array" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+		;
+		delete from T_YUN_DEMAND_REPLY where DEMAND_ID in 
+		<foreach item="ids" collection="array" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+	</delete>
+	
+	<update id="updateIsPermit" parameterType="io.yun.entity.TYunDemandEntity">
+		update T_YUN_DEMAND set `IS_PERMIT` = #{isPermit}
+			where ID = #{id} 
+	</update>
+
+</mapper>

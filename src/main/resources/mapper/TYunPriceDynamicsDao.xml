@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunPriceDynamicsDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunPriceDynamicsEntity" id="tYunPriceDynamicsMap">
+        <result property="id" column="ID"/>
+        <result property="prePrice" column="PRE_PRICE"/>
+        <result property="postPrice" column="POST_PRICE"/>
+        <result property="trend" column="TREND"/>
+        <result property="scaleTime" column="SCALE_TIME"/>
+        <result property="merchandiseId" column="MERCHANDISE_ID"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunPriceDynamicsEntity">
+		select * from T_YUN_PRICE_DYNAMICS where ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yun.dto.PriceDynamicsDto">
+		SELECT
+		DISTINCT A.ID,C.NAME as PNAME,A.SCALE_TIME,B.NAME as MNAME,B.UNIT,B.MATERIAL,A.PRE_PRICE,A.POST_PRICE,A.TREND,A.MERCHANDISE_ID
+		FROM
+		T_YUN_PRICE_DYNAMICS A
+		LEFT JOIN T_YUN_MERCHANDISE B ON A.MERCHANDISE_ID = B.ID
+		LEFT JOIN T_YUN_PROVIDER C ON B.PROVIDER_ID = C.ID
+		where 1 = 1
+		<if test="subCategoryId != null and subCategoryId.trim() != ''">
+		and B.`SUB_CATEGORY_ID` =#{subCategoryId}
+	</if>
+		<if test="Category != null and Category.trim() != ''">
+			and B.`CATEGORY_NAME` like concat('%',#{Category},'%')
+		</if>
+
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*)
+		FROM T_YUN_PRICE_DYNAMICS A
+		LEFT JOIN T_YUN_MERCHANDISE B ON A.MERCHANDISE_ID = B.ID
+		LEFT JOIN T_YUN_PROVIDER C ON B.PROVIDER_ID = C.ID
+		where 1 = 1
+		<if test="subCategoryId != null and subCategoryId.trim() != ''">
+		and B.`SUB_CATEGORY_ID` =#{subCategoryId}
+	</if>
+		<if test="Category != null and Category.trim() != ''">
+			and B.`CATEGORY_NAME` like concat('%',#{Category},'%')
+		</if>
+
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunPriceDynamicsEntity">
+		insert into T_YUN_PRICE_DYNAMICS
+		(
+			`ID`, 
+			`PRE_PRICE`, 
+			`POST_PRICE`, 
+			`TREND`, 
+			`SCALE_TIME`, 
+			`MERCHANDISE_ID`
+		)
+		values
+		(
+			#{id}, 
+			#{prePrice}, 
+			#{postPrice}, 
+			#{trend}, 
+			#{scaleTime}, 
+			#{merchandiseId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunPriceDynamicsEntity">
+		update T_YUN_PRICE_DYNAMICS 
+		<set>
+			<if test="prePrice != null">`PRE_PRICE` = #{prePrice}, </if>
+			<if test="postPrice != null">`POST_PRICE` = #{postPrice}, </if>
+			<if test="trend != null">`TREND` = #{trend}, </if>
+			<if test="scaleTime != null">`SCALE_TIME` = #{scaleTime}, </if>
+			<if test="merchandiseId != null">`MERCHANDISE_ID` = #{merchandiseId}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_PRICE_DYNAMICS where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_PRICE_DYNAMICS where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

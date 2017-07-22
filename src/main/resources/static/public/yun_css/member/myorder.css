@@ -1,0 +1,158 @@
+.customerOrderList {
+    border: 1px solid #D6D6D6;
+    padding: 20px 0;
+}
+
+#tab_link li a {
+    border: 0;
+    border-left: 1px solid #444343 !important;
+    border-radius: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    color: #444343
+}
+
+#tMain div, .customerOrderList div {
+    border: 0
+}
+
+#tab_link li:first-child a {
+    border-left: 0 !important
+}
+
+#tab_link .active a,#tab_link span {
+    color: #f25618
+}
+
+#tab_link li a:hover {
+    background: #FFFFFF
+}
+
+.tMainHead {
+    padding: 20px 0;
+    margin: 10px 0;
+    background: #E7E5E6;
+    text-align: center;
+}
+
+.tMainHead .col-md-2 {
+    color: #727272
+}
+
+.tMainList {
+    /*width: 95%;
+margin-left: 2.5%;*/
+    text-align: center;
+    white-space: nowrap;
+}
+
+.tMainList {
+    padding: 30px 0 10px 0;
+    border-bottom: 1px dashed #727272 !important;
+}
+
+.tMainList div:first-child {
+    padding-left: 0
+}
+
+.orderlistHead, .orderlistHead div {
+    padding: 0
+}
+
+.orderlistHead {
+    padding: 15px;
+    background: #EBF0F5;
+    border-bottom: 1px solid #CBD6E8 !important;
+}
+
+#tMain .panel {
+    border: 1px solid #CBD6E8 !important;
+    border-radius: 0;
+}
+
+.orderlistFoot {
+    padding: 40px 0 0 0;
+}
+
+.orangeFont {
+    color: #F15616
+}
+
+.blueFont {
+    color: #4A70AE
+}
+
+.dfFont {
+    color: #444343
+}
+
+.starrr i {
+    font-size: 30px !important
+}
+
+.userLog {
+    height: 120px;
+    background: url(https://unsplash.imgix.net/photo-1420708392410-3c593b80d416?w=1024&amp;q=50&amp;fm=jpg&amp;s=db450320d7ee6de66c24c9b0bf2de3c6);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    border-radius: 50%;
+    text-align: center;
+    width: 120px;
+}
+
+.userG {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    left: 0;
+    border-bottom-left-radius: 50%;
+    opacity: 0.8;
+    border-bottom-right-radius: 50%;
+    background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0.9) 70%, rgba(0, 0, 0, 1) 100%);
+    background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0.9) 70%, rgba(0, 0, 0, 1) 100%);
+    background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0.9) 70%, rgba(0, 0, 0, 1) 100%);
+    background-image: -webkit-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0.9) 70%, rgba(0, 0, 0, 1) 100%);
+}
+
+.userG span {
+    position: absolute;
+    bottom: 6%;
+    left: 28%;
+    color: #FFF;
+}
+
+.userG span:hover {
+    cursor: pointer;
+}
+
+.listbtn img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: auto;
+}
+
+.listbtn div {
+    color: #444343 !important;
+}
+
+.listbtn p {
+    color: #F15616 !important;
+}
+
+.indexContent {
+    border: 1px solid #CBD6E8;
+}
+#list-title{
+  background: #327CBB;
+    font-size: 2rem;
+    color: #FFFFFF;
+    width: 100%;
+    padding: 10px 10px 10px 20px;
+
+    margin-top: 10px
+}
+.listBtnHead{
+  padding-top: 20px;
+    border-left: 1px solid #ddd;
+}

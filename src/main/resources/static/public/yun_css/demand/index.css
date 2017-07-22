@@ -1,0 +1,35 @@
+#commodity {
+    width:1130px;
+    table-layout: fixed;
+}
+#commodity th,#commodity td{
+    width: 113px;
+}
+#commodity td{
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    overflow:hidden
+}
+#commodity td:hover{
+    white-space: inherit;
+}
+#commodity th:last-child,#commodity td:last-child{
+    width: 180px;
+}
+#editlist td{
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    overflow:hidden
+}
+#editlist{
+    table-layout: fixed;
+}
+#editlist td:hover{
+    white-space: inherit;
+}
+#editlist th:last-child,#editlist td:last-child{
+    width: 180px;
+}
+#editlist th,#editlist td{
+    width: 101px;
+}

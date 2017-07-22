@@ -1,0 +1,32 @@
+.mallLabel{
+  white-space: nowrap;
+}
+.headjg{
+  /*border-bottom: 2px solid;*/
+  margin-bottom: 0;
+  padding: 0 15px
+}
+.headjg .contentjg{
+  border-bottom: 2px solid;
+}
+#lookingGoodsList{
+    text-align: center;
+    color: #FFFFFF;
+    background: #EFAD4D;
+    border: 0;
+    border-radius: 0;
+}
+.listTable th{
+  width: 8%;
+  text-align: center;
+}
+.listTable td{
+  white-space: nowrap;
+  text-align: center;
+}
+.listTable td span{
+  line-height: 3;
+}
+.listTable td a{
+  cursor: pointer;
+}

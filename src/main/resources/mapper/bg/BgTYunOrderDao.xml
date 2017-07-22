@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.unicall.bgyun.dao.BgTYunOrderDao">
+	<resultMap type="io.yun.entity.TYunOrderEntity" id="tYunOrderMap">
+		<result property="id" column="ID"/>
+		<result property="orderNo" column="ORDER_NO"/>
+		<result property="status" column="STATUS"/>
+		<result property="orderPrice" column="ORDER_PRICE"/>
+		<result property="paymentExpire" column="PAYMENT_EXPIRE"/>
+		<result property="invoiceHead" column="INVOICE_HEAD"/>
+		<result property="invoiceAddress" column="INVOICE_ADDRESS"/>
+		<result property="invoiceStatus" column="INVOICE_STATUS"/>
+		<result property="deliveryMethod" column="DELIVERY_METHOD"/>
+		<result property="deliveryCredential" column="DELIVERY_CREDENTIAL"/>
+		<result property="deliveryComment" column="DELIVERY_COMMENT"/>
+		<result property="orderTime" column="ORDER_TIME"/>
+		<result property="memberId" column="MEMBER_ID"/>
+		<result property="isDelete" column="IS_DELETE"/>
+		<result property="providerId" column="PROVIDER_ID"/>
+	</resultMap>
+
+
+
+  <!--可进行普通分页，status状态分页，orderNo,id查询-->
+	<select id="queryList"  resultType="io.yun.entity.TYunOrderEntity">
+
+		select  p.ID as id, p.ORDER_NO as orderNo ,s.STATUS as status,p.ORDER_PRICE as orderPrice, p.PAYMENT_EXPIRE as paymentExpire
+		FROM  T_YUN_ORDER p,T_YUN_ORDER_STATUS s
+		WHERE  p.status=s.name
+		    
+	  
+ 	 	<if test="status != null and status.trim() != ''">
+			and  s.STATUS=#{status}
+
+		</if>
+
+		<if test="orderNo != null and orderNo.trim()!=''">
+			AND p.ORDER_NO=#{orderNo}
+		</if>
+
+		<if test="id != null and id.trim()!=''">
+			AND p.id=#{id}
+		</if>
+
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+		
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by ${sidx} ${order}
+			</when>
+		
+		</choose>
+		
+
+	</select>
+
+	<!--通过订单号获取订单信息-->
+	<select id="queryByOrderNo" parameterType="String"  resultType="io.yun.entity.TYunOrderEntity">
+		select  p.ID as id, p.ORDER_NO as orderNo ,s.STATUS as status,p.ORDER_PRICE as orderPrice, p.PAYMENT_EXPIRE as paymentExpire,
+		p.INVOICE_HEAD as  invoiceHead ,p.INVOICE_ADDRESS AS invoiceAddress,p.INVOICE_STATUS as invoiceStatus,DELIVERY_METHOD as deliveryMethod,
+		p.DELIVERY_CREDENTIAL AS deliveryCredential,p.DELIVERY_COMMENT AS deliveryComment,p.ORDER_TIME as orderTime, p.MEMBER_ID as memberId,
+		p.IS_DELETE as isDelete,p.PROVIDER_ID asproviderId
+		from T_YUN_ORDER p,T_YUN_ORDER_STATUS s
+		WHERE  p.status=s.name
+		   <if test="orderNo != null and orderNo.trim()!=''">
+		     AND p.ORDER_NO=#{orderNo}
+		   </if>
+
+	</select>
+
+	<!--通过订单号Id获取订单信息-->
+	<select id="queryObject"  resultType="io.yun.entity.TYunOrderEntity">
+
+		select  p.ID as id, p.ORDER_NO as orderNo ,s.STATUS as status,p.ORDER_PRICE as orderPrice, p.PAYMENT_EXPIRE as paymentExpire,
+		p.INVOICE_HEAD as  invoiceHead ,p.INVOICE_ADDRESS AS invoiceAddress,p.INVOICE_STATUS as invoiceStatus,DELIVERY_METHOD as deliveryMethod,
+		p.DELIVERY_CREDENTIAL AS deliveryCredential,p.DELIVERY_COMMENT AS deliveryComment,p.ORDER_TIME as orderTime, p.MEMBER_ID as memberId,
+		p.IS_DELETE as isDelete,p.PROVIDER_ID asproviderId
+		from T_YUN_ORDER p,T_YUN_ORDER_STATUS s
+		WHERE  p.status=s.name
+
+		<if test="_parameter != null and _parameter.trim()!=''">
+			AND p.id=#{id}
+		</if>
+
+	</select>
+
+
+	
+	<select id="queryTotal" resultType="int">
+
+        select  count(*) from T_YUN_ORDER p
+		    where 1=1
+		       
+	  	<if test="keyWord != null and keyWord.trim() != ''">
+			and   
+			 (
+			         p.NAME like CONCAT(CONCAT('%', #{keyWord}),'%') 
+			         or 
+			         p.ID LIKE CONCAT(CONCAT('%', #{keyWord}),'%') 
+			       
+			     )      
+		</if>
+
+	</select>
+
+
+
+
+
+	<update id="updateDeliverStatus" parameterType="io.yun.entity.TYunOrderEntity">
+		update T_YUN_ORDER
+		<set>
+			`STATUS` ='待收货'
+
+		</set>
+		where ORDER_NO= #{orderNo} AND STATUS='待发货'
+	</update>
+
+
+
+<!--
+
+	<select id="queryListAllAttribute"  resultType="io.yun.entity.TYunOrderEntity">
+
+		select  p.ID as id, p.ORDER_NO as orderNo ,s.STATUS as status,p.ORDER_PRICE as orderPrice, p.PAYMENT_EXPIRE as paymentExpire,
+		p.INVOICE_HEAD as  invoiceHead ,p.INVOICE_ADDRESS AS invoiceAddress,p.INVOICE_STATUS as invoiceStatus,DELIVERY_METHOD as deliveryMethod,
+		p.DELIVERY_CREDENTIAL AS deliveryCredential,p.DELIVERY_COMMENT AS deliveryComment,p.ORDER_TIME as orderTime, p.MEMBER_ID as memberId,
+		p.IS_DELETE as isDelete,p.PROVIDER_ID asproviderId
+		from T_YUN_ORDER p,T_YUN_ORDER_STATUS s
+		WHERE  p.status=s.name
+
+
+		<if test="status != null and status.trim() != ''">
+			and
+			(
+			s.STATUS=#{status}
+			)
+		</if>
+
+
+
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by ${sidx} ${order}
+			</when>
+
+		</choose>
+
+
+	</select>
+	-->
+
+</mapper>

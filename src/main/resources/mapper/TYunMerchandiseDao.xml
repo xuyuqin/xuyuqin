@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunMerchandiseDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunMerchandiseEntity" id="tYunMerchandiseMap">
+        <result property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="price" column="PRICE"/>
+        <result property="isRecommend" column="IS_RECOMMEND"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="title" column="TITLE"/>
+        <result property="unit" column="UNIT"/>
+        <result property="detail" column="DETAIL"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+        <result property="material" column="MATERIAL"/>
+        <result property="inSale" column="IN_SALE"/>
+        <result property="productId" column="PRODUCT_ID"/>
+        <result property="providerId" column="PROVIDER_ID"/>
+        <result property="qualityScore" column="QUALITY_SCORE"/>
+        <result property="priceScore" column="PRICE_SCORE"/>
+        <result property="serviceScore" column="SERVICE_SCORE"/>
+        <result property="subCategoryId" column="SUB_CATEGORY_ID"/>
+		<result property="region" column="REGION"/>
+		<association property="provider" column="PROVIDER_ID" select="getProvider"/>
+	</resultMap>
+
+	<select id="getProvider" parameterType="String" resultType="io.yun.entity.TYunProviderEntity">
+		select *
+		from T_YUN_PROVIDER
+		where ID = #{id}
+	</select>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunMerchandiseEntity">
+		select * from T_YUN_MERCHANDISE where ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yun.dto.MerchandiseDto" >
+		SELECT
+		DISTINCT A.ID,A.NAME,D.NAME AS SubCategoryName,B.NAME AS PROVIDER_NAME,A.TITLE,A.MATERIAL,A.DETAIL,REGION,
+        A.UNIT,A.NUMBER,A.WEIGHT,A.PRICE,A.IN_SALE,A.CREATE_TIME,A.SALE_NUM,C.NAME AS PRODUCT_NAME
+		FROM
+		T_YUN_MERCHANDISE A
+		LEFT JOIN T_YUN_PROVIDER B ON A.PROVIDER_ID=B.ID
+		LEFT JOIN T_YUN_PRODUCT C ON A.PRODUCT_ID=C.ID
+		LEFT JOIN T_YUN_CATEGORY D ON C.SUBCATEGORYNAME=D.NAME
+		<where>
+			<if test="Category != null and Category.trim() != ''">
+				and D.`NAME` like concat('%',#{Category},'%')
+			</if>
+			<if test="region != null and region.trim() != ''">
+	           and  B.`REGION` =#{region}
+			</if>
+			<if test="parent != null">
+				and D.PARENT= #{parent}
+			</if>
+			<if test="mname != null and mname.trim() != ''">
+				and A.`NAME` like concat('%',#{mname},'%')
+			</if>
+			<if test="detail != null and detail.trim() != ''">
+				and A.`DETAIL` like concat('%',#{detail},'%')
+			</if>
+			<if test="material != null and material.trim() != ''">
+				and A.`MATERIAL` = #{material}
+			</if>
+			<if test="providername != null and providername.trim() != ''">
+				and B.`NAME`like concat('%',#{providername},'%')
+			</if>
+			<if test="productname != null and productname.trim() != ''">
+				and C.`NAME`like concat('%',#{productname},'%')
+			</if>
+			<if test="insale != null and insale == 1">
+				and A.`IN_SALE` = 1
+			</if>
+			<if test="insale != null and insale == 0">
+				and A.`IN_SALE` = 0 or A.`IN_SALE` IS NULL
+			</if>
+			<if test="providerid != null and providerid.trim() != ''">
+				and A.`PROVIDER_ID`= #{providerid}
+			</if>
+		</where>
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by ${sidx} ${order}
+			</when>
+			<!--<otherwise>-->
+			<!--order by ID desc-->
+			<!--</otherwise>-->
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*)
+		FROM(
+		SELECT
+		DISTINCT A.ID
+		FROM
+		T_YUN_MERCHANDISE A
+		LEFT JOIN T_YUN_PROVIDER B ON A.PROVIDER_ID=B.ID
+		LEFT JOIN T_YUN_PRODUCT C ON A.PRODUCT_ID=C.ID
+		LEFT JOIN T_YUN_CATEGORY D ON C.SUBCATEGORYNAME=D.NAME
+		<where>
+			<if test="Category != null and Category.trim() != ''">
+				and D.`NAME` like concat('%',#{Category},'%')
+			</if>
+			<if test="region != null and region.trim() != ''">
+				and B.`REGION` =#{region}
+			</if>
+			<if test="parent != null">
+				and D.PARENT= #{parent}
+			</if>
+			<if test="mname != null and mname.trim() != ''">
+				and A.`NAME` like concat('%',#{mname},'%')
+			</if>
+			<if test="detail != null and detail.trim() != ''">
+				and A.`DETAIL` like concat('%',#{detail},'%')
+			</if>
+			<if test="material != null and material.trim() != ''">
+				and A.`MATERIAL` = #{material}
+			</if>
+			<if test="providername != null and providername.trim() != ''">
+				and B.`NAME`like concat('%',#{providername},'%')
+			</if>
+			<if test="productname != null and productname.trim() != ''">
+				and C.`NAME`like concat('%',#{productname},'%')
+			</if>
+			<if test="insale != null and insale == 1">
+				and A.`IN_SALE` = 1
+			</if>
+			<if test="insale != null and insale == 0">
+				and A.`IN_SALE` = 0 or A.`IN_SALE` IS NULL
+			</if>
+			<if test="providerid != null and providerid.trim() != ''">
+				and A.`PROVIDER_ID`= #{providerid}
+			</if>
+		</where>)F
+	</select>
+
+	<insert id="save" parameterType="io.yun.entity.TYunMerchandiseEntity">
+		insert into T_YUN_MERCHANDISE
+		(
+			`ID`, 
+			`NAME`,
+			`PRICE`,
+			`PRICE1`,
+			`PRICE2`,
+			`PRICE3`,
+			`PRICE4`,
+			`PRICE5`,
+			`CREATE_TIME`, 
+			`TITLE`, 
+			`UNIT`, 
+			`DETAIL`,
+            `OTHER`,
+			`NUMBER`,
+			`SPE`,
+			`IN_SALE`, 
+			`PRODUCT_ID`, 
+			`PROVIDER_ID`, 
+			`ISXHSP`,
+			`SUB_CATEGORY_ID`
+		)
+		values
+		(
+			#{id}, 
+			#{name}, 
+			#{price},
+			#{price1},
+			#{price2},
+			#{price3},
+			#{price4},
+			#{price5},
+			#{createTime}, 
+			#{title}, 
+			#{unit}, 
+			#{detail},
+            #{other},
+            #{number},
+			#{spe},
+			#{inSale}, 
+			#{productId}, 
+			#{providerId}, 
+			#{isxhsp},
+			#{subCategoryId}
+		)
+	</insert>
+
+    <insert id="saveImg">
+        <selectKey keyProperty="id" resultType="java.lang.String"
+                   order="BEFORE">
+            select replace(uuid(),'-','') from dual
+        </selectKey>
+        insert into T_YUN_MERCHANDISE_IMAGE
+        (
+        `ID`,
+        `MERCHANDISE_ID`,
+        `URL`
+        )
+        values
+        (
+        #{id},
+        #{merchandiseId},
+        #{url}
+        )
+    </insert>
+
+	<update id="update" parameterType="io.yun.entity.TYunMerchandiseEntity">
+		update T_YUN_MERCHANDISE 
+		<set>
+			<if test="name != null">`NAME` = #{name}, </if>
+            <if test="title != null">`TITLE` = #{title}, </if>
+			<if test="price != null">`PRICE` = #{price}, </if>
+            <if test="price1 != null">`PRICE1` = #{price1}, </if>
+            <if test="price2 != null">`PRICE2` = #{price2}, </if>
+            <if test="price3 != null">`PRICE3` = #{price3}, </if>
+            <if test="price4 != null">`PRICE4` = #{price4}, </if>
+            <if test="price5 != null">`PRICE5` = #{price5}, </if>
+            <if test="isxhsp != null">`ISXHSP` = #{isxhsp}, </if>
+            <if test="spe != null">`SPE` = #{spe}, </if>
+           	<if test="unit != null">`UNIT` = #{unit}, </if>
+            <if test="number != null">`NUMBER` = #{number}, </if>
+            <if test="other != null">`OTHER` = #{other}, </if>
+			<if test="detail != null">`DETAIL` = #{detail}, </if>
+			<if test="updateTime != null">`UPDATE_TIME` = #{updateTime}, </if>
+			<if test="inSale != null">`IN_SALE` = #{inSale}, </if>
+			<if test="productId != null">`PRODUCT_ID` = #{productId}, </if>
+			<if test="subCategoryId != null">`SUB_CATEGORY_ID` = #{subCategoryId}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_MERCHANDISE where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_MERCHANDISE where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+    <select id="getByProviderId" resultType="io.yun.dto.MerchandiseDto" >
+        SELECT A.ID,A.`NAME`,A.MATERIAL,A.PRICE,B.SPECIFICATION
+        from T_YUN_MERCHANDISE AS A
+        LEFT JOIN T_YUN_MERCHANDISE_SPEC AS B ON A.ID=B.MERCHANDISE_ID
+        WHERE PROVIDER_ID= #{providerId}
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <!--<otherwise>-->
+            <!--order by ID desc-->
+            <!--</otherwise>-->
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="getByProviderIdTotal" resultType="int" >
+        SELECT COUNT(*)
+        from T_YUN_MERCHANDISE
+        WHERE PROVIDER_ID= #{providerId}
+    </select>
+</mapper>

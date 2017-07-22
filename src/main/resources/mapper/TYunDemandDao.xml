@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunDemandDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunDemandEntity" id="tYunDemandMap">
+        <result property="id" column="ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="category" column="CATEGORY"/>
+        <result property="subCategory" column="SUB_CATEGORY"/>
+        <result property="productId" column="PRODUCT_ID"/>
+        <result property="amount" column="AMOUNT"/>
+        <result property="specification" column="SPECIFICATION"/>
+        <result property="material" column="MATERIAL"/>
+        <result property="district" column="DISTRICT"/>
+        <result property="companyName" column="COMPANY_NAME"/>
+        <result property="contract" column="CONTRACT"/>
+        <result property="phone" column="PHONE"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="productBuy" column="PRODUCT_BUY"/>
+        <result property="productName" column="PRODUCT_NAME"/>
+        <result property="name" column="NAME"/>
+        <result property="replyCount" column="REPLY_COUNT"/>
+        <result property="validity" column="validity"/>
+        <result property="remarks" column="REMARKS"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunDemandEntity">
+		select * from T_YUN_DEMAND where ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yun.entity.TYunDemandEntity">
+		select * from T_YUN_DEMAND
+		<where>
+			<if test="memberId != null">
+			and `MEMBER_ID` = #{memberId}
+			</if>
+			<if test="category != null and category.trim() != ''">
+				and `CATEGORY` = #{category}
+			</if>
+			<if test="productName != null and productName.trim() != ''">
+				and `PRODUCT_NAME` = #{productName}
+			</if>
+			<if test="companyName != null and companyName.trim() != ''">
+				and `COMPANY_NAME`= #{companyName}
+			</if>
+			<if test="district != null and district.trim() != ''">
+				and `DISTRICT`= #{district}
+			</if>
+			<if test="providerId == null or providerId.trim() == ''">
+				and `PROVIDER_ID` IS NULL OR `PROVIDER_ID`=''
+			</if>
+			<if test="providerId != null and providerId.trim() != ''">
+				and `PROVIDER_ID`= #{providerId}
+			</if>
+
+		</where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by ID desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryList1" resultType="io.yun.entity.TYunDemandEntity">
+		SELECT
+		*
+		FROM
+		T_YUN_DEMAND A
+		LEFT JOIN T_YUN_DEMAND_REPLY B ON A.ID = B.DEMAND_ID
+		<where>
+			<if test="memberId != null">
+				and B.`PROVIDER_ID` = #{memberId}
+			</if>
+		</where>
+		order by A.ID desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_DEMAND
+		<where>
+			<if test="memberId != null">
+			and `MEMBER_ID` = #{memberId}
+		</if>
+			<if test="category != null and category.trim() != ''">
+				and `CATEGORY` = #{category}
+			</if>
+			<if test="productName != null and productName.trim() != ''">
+				and `PRODUCT_NAME` = #{productName}
+			</if>
+			<if test="providername != null and providername.trim() != ''">
+				and `PROVIDER_NAME`= #{providername}
+			</if>
+			<if test="district != null and district.trim() != ''">
+				and `DISTRICT`= #{district}
+			</if>
+			<if test="providerId == null or providerId.trim() == ''">
+				and `PROVIDER_ID` IS NULL OR `PROVIDER_ID`=''
+			</if>
+			<if test="providerId != null and providerId.trim() != ''">
+				and `PROVIDER_ID`= #{providerId}
+			</if>
+		</where>
+	</select>
+
+	<select id="queryTotal1" resultType="int">
+		select count(*) 		FROM
+		T_YUN_DEMAND A
+		LEFT JOIN T_YUN_DEMAND_REPLY B ON A.ID = B.DEMAND_ID
+		<where>
+			<if test="memberId != null">
+				and B.`PROVIDER_ID` = #{memberId}
+			</if>
+		</where>
+	</select>
+
+	<insert id="save" parameterType="io.yun.entity.TYunDemandEntity">
+		<selectKey keyProperty="id" resultType="java.lang.String"
+				   order="BEFORE">
+			select replace(uuid(),'-','') from dual
+		</selectKey>
+		insert into T_YUN_DEMAND
+		(
+			`ID`, 
+			`MEMBER_ID`, 
+			`CATEGORY`, 
+			`SUB_CATEGORY`, 
+			`PRODUCT_ID`, 
+			`AMOUNT`, 
+			`SPECIFICATION`, 
+			`MATERIAL`, 
+			`DISTRICT`,
+			`COMPANY_NAME`, 
+			`CONTRACT`, 
+			`PHONE`, 
+			`CREATE_TIME`, 
+			`PRODUCT_BUY`, 
+			`PRODUCT_NAME`,
+			`NAME`, 
+			`REPLY_COUNT`, 
+			`validity`, 
+			`REMARKS`
+		)
+		values
+		(
+			#{id}, 
+			#{memberId}, 
+			#{category}, 
+			#{subCategory}, 
+			#{productId}, 
+			#{amount}, 
+			#{specification}, 
+			#{material}, 
+			#{district},
+			#{companyName}, 
+			#{contract}, 
+			#{phone}, 
+			#{createTime}, 
+			#{productBuy}, 
+			#{productName},
+			#{name}, 
+			#{replyCount}, 
+			#{validity}, 
+			#{remarks}
+		)
+	</insert>
+
+	<insert id="save1" parameterType="io.yun.entity.TYunDemandEntity">
+		<selectKey keyProperty="id" resultType="java.lang.String"
+				   order="AFTER">
+			select replace(uuid(),'-','') from dual
+		</selectKey>
+		insert into T_YUN_DEMAND
+		(
+		`ID`,
+		`MEMBER_ID`,
+		`CATEGORY`,
+		`SUB_CATEGORY`,
+		`PRODUCT_ID`,
+		`AMOUNT`,
+		`SPECIFICATION`,
+		`MATERIAL`,
+		`DISTRICT`,
+		`PROVIDER_ID`,
+		`COMPANY_NAME`,
+		`CONTRACT`,
+		`PHONE`,
+		`CREATE_TIME`,
+		`PRODUCT_BUY`,
+		`PRODUCT_NAME`,
+		`PROVIDER_NAME`,
+		`NAME`,
+		`REPLY_COUNT`,
+		`validity`,
+		`REMARKS`
+		)
+		values
+		(
+		#{id},
+		#{memberId},
+		#{category},
+		#{subCategory},
+		#{productId},
+		#{amount},
+		#{specification},
+		#{material},
+		#{district},
+		#{providerId},
+		#{companyName},
+		#{contract},
+		#{phone},
+		#{createTime},
+		#{productBuy},
+		#{productName},
+		#{providerName},
+		#{name},
+		#{replyCount},
+		#{validity},
+		#{remarks}
+		)
+	</insert>
+
+	<update id="update" parameterType="io.yun.entity.TYunDemandEntity">
+		update T_YUN_DEMAND 
+		<set>
+			<if test="memberId != null">`MEMBER_ID` = #{memberId}, </if>
+			<if test="category != null">`CATEGORY` = #{category}, </if>
+			<if test="subCategory != null">`SUB_CATEGORY` = #{subCategory}, </if>
+			<if test="productId != null">`PRODUCT_ID` = #{productId}, </if>
+			<if test="amount != null">`AMOUNT` = #{amount}, </if>
+			<if test="specification != null">`SPECIFICATION` = #{specification}, </if>
+			<if test="material != null">`MATERIAL` = #{material}, </if>
+			<if test="district != null">`DISTRICT` = #{district}, </if>
+			<if test="providerId != null">`PROVIDER_ID` = #{providerId}, </if>
+			<if test="companyName != null">`COMPANY_NAME` = #{companyName}, </if>
+			<if test="contract != null">`CONTRACT` = #{contract}, </if>
+			<if test="phone != null">`PHONE` = #{phone}, </if>
+			<if test="createTime != null">`CREATE_TIME` = #{createTime}, </if>
+			<if test="productBuy != null">`PRODUCT_BUY` = #{productBuy}, </if>
+			<if test="productName != null">`PRODUCT_NAME` = #{productName}, </if>
+			<if test="providerName != null">`PROVIDER_NAME` = #{providerName}, </if>
+			<if test="name != null">`NAME` = #{name}, </if>
+			<if test="replyCount != null">`REPLY_COUNT` = #{replyCount}, </if>
+			<if test="validity != null">`validity` = #{validity}, </if>
+			<if test="remarks != null">`REMARKS` = #{remarks}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_DEMAND where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_DEMAND where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

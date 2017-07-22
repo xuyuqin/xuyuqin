@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.unicall.bgyun.dao.BgTYunCategoryDao">
+
+    
+<!--     <resultMap type="HashMap" id="queryCategoryMap">
+        <result property="categoryId" column="CATEGORYId"/>
+        <result property="categoryName" column="CATEGORYNAME"/>
+        <result property="updateTime" column="UPDATETIME"/>
+    </resultMap> 
+   <resultMap type="HashMap" id="queryVarietyMap">
+   
+        <result property="subCategoryName" column="SUBCATEGORYNAME"/>
+        <result property="updateTime" column="UPDATETIME"/>
+    </resultMap>
+ -->
+
+
+	
+    <select id="queryCategory" resultType="java.util.HashMap">
+     
+	      select  c.ID as categoryId, c.NAME as categoryName,c.UPDATE_TIME as updateTime from T_YUN_CATEGORY c
+	         where c.PARENT is null
+	</select>
+	
+
+	
+    <select id="queryVarietyByCategoryId" resultType="java.util.HashMap">
+     
+           select   c.NAME as varietyName ,c.UPDATE_TIME as updateTime from T_YUN_CATEGORY c
+	          where c.ID = #{categoryId}
+	</select>
+	
+	 <select id="queryObject" resultType="java.util.HashMap">
+     
+	      select   (case  WHEN   c.PARENT is NULL then '0' else '1' END )  as result ,c.NAME, cc.NAME as PARENT from T_YUN_CATEGORY c
+              LEFT JOIN T_YUN_CATEGORY cc ON c.PARENT = cc.ID
+	            where c.ID = #{id}
+	</select>
+	
+
+
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_CATEGORY where ID in 
+		<foreach item="ids" collection="array" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+	</delete>
+	
+	<insert id="save" parameterType="io.yun.entity.TYunCategoryEntity" >
+	  
+		
+		insert into T_YUN_CATEGORY
+		(
+			`ID`, 
+			`NAME`,
+			`PARENT`, 
+			`UPDATE_TIME`
+			
+		)
+		values
+		(
+			#{id}, 
+			#{name}, 
+			#{parent}, 
+			#{updateTime}
+
+		)
+
+	</insert>
+   
+   <update id="update" parameterType="io.yun.entity.TYunCategoryEntity">
+     update T_YUN_CATEGORY
+     <set>
+       <if test="name != null"> NAME = #{name},</if>
+       <if test="parent != null"> PARENT = #{parent},</if>
+       UPDATE_TIME = #{updateTime}
+     </set>
+     where ID = #{id}
+ 
+   </update>
+</mapper>

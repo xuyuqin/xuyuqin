@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.unicall.bgyun.dao.BgTYunResourceDao">
+
+
+	
+	<select id="queryMyList" resultType="io.yun.entity.TYunResourceEntity">
+		select r.*, c.NAME as category,sr.name as providername from T_YUN_RESOURCE r
+		    LEFT JOIN T_YUN_CATEGORY c on r.CATEGORY_ID = c.ID
+		    LEFT JOIN T_YUN_RESOURCE_COLLECTION rc on r.ID = rc.RESOURCE_ID
+		    LEFT JOIN sys_register sr on sr.id = rc.MEMBER_ID
+		       where sr.trader = #{traderId}
+		       
+ 	 	<if test="keyWord != null and keyWord.trim() != ''">
+			and 
+			    (
+			         r.NAME like CONCAT(CONCAT('%', #{keyWord}),'%')
+			         or 
+			         r.COMPANY_HEAD LIKE CONCAT(CONCAT('%', #{keyWord}),'%') 
+			         or 
+			         sr.name LIKE CONCAT(CONCAT('%', #{keyWord}),'%') 
+			     )
+		</if>
+		
+	
+		<if test="isPermit != null and isPermit.trim()!=''">
+			and r.IS_PERMIT = #{isPermit}
+		</if>
+		<if test="time1 != null and time1.trim() != ''">
+			and UPLOAD_TIME &gt;=#{timeBegin}
+		</if>
+		<if test="time2 != null and time2.trim() != ''">
+			and UPLOAD_TIME &lt;= #{timeEnd}
+		</if>
+
+
+
+		<choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            
+			<otherwise>
+                order by r.ID desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+	<select id="queryMyTotal" resultType="int">
+		select count(*) from T_YUN_RESOURCE r
+		    LEFT JOIN T_YUN_CATEGORY c on r.CATEGORY_ID = c.ID
+		    LEFT JOIN T_YUN_RESOURCE_COLLECTION rc on r.ID = rc.RESOURCE_ID
+		    LEFT JOIN sys_register sr on sr.id = rc.MEMBER_ID
+		       where sr.trader = #{traderId}
+		       
+	    <if test="keyWord != null and keyWord.trim() != ''">
+			and 
+			    (
+			         r.NAME like CONCAT(CONCAT('%', #{keyWord}),'%')
+			         or 
+			         r.COMPANY_HEAD LIKE CONCAT(CONCAT('%', #{keyWord}),'%') 
+			         or 
+			         sr.name LIKE CONCAT(CONCAT('%', #{keyWord}),'%') 
+			     )
+		</if>
+		
+	
+		<if test="isPermit != null and isPermit.trim()!=''">
+			and r.IS_PERMIT = #{isPermit}
+		</if>
+		<if test="time1 != null and time1.trim() != ''">
+			and UPLOAD_TIME &gt;=#{timeBegin}
+		</if>
+		<if test="time2 != null and time2.trim() != ''">
+			and UPLOAD_TIME &lt;= #{timeEnd}
+		</if>
+	
+	</select>
+	
+	
+	<select id="queryList" resultType="io.yun.entity.TYunResourceEntity">
+		select r.*, c.NAME as category,sr.name as providername from T_YUN_RESOURCE r
+		    LEFT JOIN T_YUN_CATEGORY c on r.CATEGORY_ID = c.ID
+		    LEFT JOIN T_YUN_RESOURCE_COLLECTION rc on r.ID = rc.RESOURCE_ID
+		    LEFT JOIN sys_register sr on sr.id = rc.MEMBER_ID
+		       where 1=1
+		       
+ 	 	<if test="keyWord != null and keyWord.trim() != ''">
+			and 
+			    (
+			         r.NAME like CONCAT(CONCAT('%', #{keyWord}),'%')
+			         or 
+			         r.COMPANY_HEAD LIKE CONCAT(CONCAT('%', #{keyWord}),'%') 
+			         or 
+			         sr.name LIKE CONCAT(CONCAT('%', #{keyWord}),'%') 
+			     )
+		</if>
+		
+	
+		<if test="isPermit != null and isPermit.trim()!=''">
+			and r.IS_PERMIT = #{isPermit}
+		</if>
+		<if test="time1 != null and time1.trim() != ''">
+			and UPLOAD_TIME &gt;=#{timeBegin}
+		</if>
+		<if test="time2 != null and time2.trim() != ''">
+			and UPLOAD_TIME &lt;= #{timeEnd}
+		</if>
+		
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+
+
+	</select>
+	
+	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_RESOURCE r
+		    LEFT JOIN T_YUN_CATEGORY c on r.CATEGORY_ID = c.ID
+		    LEFT JOIN T_YUN_RESOURCE_COLLECTION rc on r.ID = rc.RESOURCE_ID
+		    LEFT JOIN sys_register sr on sr.id = rc.MEMBER_ID
+		       where 1=1
+		       
+	    <if test="keyWord != null and keyWord.trim() != ''">
+			and 
+			    (
+			         r.NAME like CONCAT(CONCAT('%', #{keyWord}),'%')
+			         or 
+			         r.COMPANY_HEAD LIKE CONCAT(CONCAT('%', #{keyWord}),'%') 
+			         or 
+			         sr.name LIKE CONCAT(CONCAT('%', #{keyWord}),'%') 
+			     )
+		</if>
+		
+	
+		<if test="isPermit != null and isPermit.trim()!=''">
+			and r.IS_PERMIT = #{isPermit}
+		</if>
+		<if test="time1 != null and time1.trim() != ''">
+			and UPLOAD_TIME &gt;=#{timeBegin}
+		</if>
+		<if test="time2 != null and time2.trim() != ''">
+			and UPLOAD_TIME &lt;= #{timeEnd}
+		</if>
+	</select>
+	
+	<select id="queryObject" resultType="io.yun.entity.TYunResourceEntity">
+      select r.*,sr.mobile
+		  from T_YUN_RESOURCE r		   
+		    LEFT JOIN sys_register sr on r.PROVIDER_ID = sr.id
+		    where r.ID = #{id}
+	</select>
+	
+	<delete id="delete">
+		delete from T_YUN_RESOURCE where ID = #{id}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_RESOURCE where ID in 
+		<foreach item="ids" collection="array" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+		;
+		delete from T_YUN_RESOURCE_COLLECTION where RESOURCE_ID in 
+		<foreach item="ids" collection="array" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+	</delete>
+	
+	
+	<update id="updateIsPermit" parameterType="io.yun.entity.TYunResourceEntity">
+		update T_YUN_RESOURCE set `IS_PERMIT` = #{isPermit}
+			where ID = #{id} 
+	</update>
+	
+	
+
+</mapper>

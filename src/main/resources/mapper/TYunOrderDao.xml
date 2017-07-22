@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunOrderDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunOrderEntity" id="tYunOrderMap">
+        <result property="id" column="ID"/>
+        <result property="orderNo" column="ORDER_NO"/>
+        <result property="status" column="STATUS"/>
+        <result property="orderPrice" column="ORDER_PRICE"/>
+        <result property="paymentExpire" column="PAYMENT_EXPIRE"/>
+        <result property="invoiceHead" column="INVOICE_HEAD"/>
+        <result property="invoiceAddress" column="INVOICE_ADDRESS"/>
+        <result property="invoiceStatus" column="INVOICE_STATUS"/>
+        <result property="deliveryMethod" column="DELIVERY_METHOD"/>
+        <result property="deliveryCredential" column="DELIVERY_CREDENTIAL"/>
+        <result property="deliveryComment" column="DELIVERY_COMMENT"/>
+        <result property="orderTime" column="ORDER_TIME"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="isDelete" column="IS_DELETE"/>
+        <result property="providerId" column="PROVIDER_ID"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunOrderEntity">
+		select * from T_YUN_ORDER where ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yun.dto.MyOrderDto">
+		SELECT A.ORDER_NO, A.`STATUS`, A.ORDER_PRICE, A.PAYMENT_EXPIRE, A.ORDER_TIME, B.AMOUNT, C.`NAME` AS MERCHANDISE_NAME, C.PRICE, C.DETAIL, C.MATERIAL, C.WEIGHT, D.`NAME` AS PRODUCT_NAME, D.SUBCATEGORYNAME AS CATEGORY_NAME
+		FROM T_YUN_ORDER AS A
+		LEFT JOIN T_YUN_ORDER_MERCHANDISE AS B ON A.ID=B.ORDER_ID
+		LEFT JOIN T_YUN_MERCHANDISE AS C ON B.ORDER_MERCHANDISE_ID=C.ID
+		LEFT JOIN T_YUN_PRODUCT AS D ON C.PRODUCT_ID=D.ID
+		<where>
+			<if test="memberId != null">
+			     A.MEMBER_ID = #{memberId}
+			</if>
+			<if test="orderNo != null and orderNo.trim() !=''">
+				AND ORDER_NO = #{orderNo}
+			</if>
+		</where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by A.ORDER_NO desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="statusTotal" resultType="Map">
+        SELECT DISTINCT A.`STATUS`,IFNULL(B.SUBNUM, 0)AS TotalNUM
+        FROM T_YUN_ORDER AS A
+        LEFT JOIN
+       (SELECT `STATUS`,COUNT(1)AS SUBNUM
+        FROM T_YUN_ORDER
+        WHERE MEMBER_ID= #{memberId}
+        GROUP BY `STATUS`)AS B
+        ON A.`STATUS`=B.`STATUS`
+        ORDER BY A.`STATUS` ASC
+
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*)
+		FROM T_YUN_ORDER AS A
+		LEFT JOIN T_YUN_ORDER_MERCHANDISE AS B ON A.ID=B.ORDER_ID
+		LEFT JOIN T_YUN_MERCHANDISE AS C ON B.ORDER_MERCHANDISE_ID=C.ID
+		LEFT JOIN T_YUN_PRODUCT AS D ON C.PRODUCT_ID=D.ID
+		<where>
+			<if test="memberId != null">
+				A.MEMBER_ID = #{memberId}
+			</if>
+            <if test="orderNo != null and orderNo.trim() !=''">
+                AND ORDER_NO = #{orderNo}
+			</if>
+		</where>
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunOrderEntity">
+		<selectKey keyProperty="id" resultType="java.lang.String"
+				   order="BEFORE">
+			select replace(uuid(),'-','') from dual
+		</selectKey>
+		insert into T_YUN_ORDER
+		(
+			`ID`, 
+			`ORDER_NO`, 
+			`STATUS`, 
+			`ORDER_PRICE`, 
+			`PAYMENT_EXPIRE`, 
+			`INVOICE_HEAD`, 
+			`INVOICE_ADDRESS`, 
+			`INVOICE_STATUS`, 
+			`DELIVERY_METHOD`, 
+			`DELIVERY_CREDENTIAL`, 
+			`DELIVERY_COMMENT`, 
+			`ORDER_TIME`, 
+			`MEMBER_ID`, 
+			`IS_DELETE`, 
+			`PROVIDER_ID`
+		)
+		values
+		(
+			#{id}, 
+			#{orderNo}, 
+			#{status}, 
+			#{orderPrice}, 
+			#{paymentExpire}, 
+			#{invoiceHead}, 
+			#{invoiceAddress}, 
+			#{invoiceStatus}, 
+			#{deliveryMethod}, 
+			#{deliveryCredential}, 
+			#{deliveryComment}, 
+			#{orderTime}, 
+			#{memberId}, 
+			#{isDelete}, 
+			#{providerId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunOrderEntity">
+		update T_YUN_ORDER 
+		<set>
+			<if test="orderNo != null">`ORDER_NO` = #{orderNo}, </if>
+			<if test="status != null">`STATUS` = #{status}, </if>
+			<if test="orderPrice != null">`ORDER_PRICE` = #{orderPrice}, </if>
+			<if test="paymentExpire != null">`PAYMENT_EXPIRE` = #{paymentExpire}, </if>
+			<if test="invoiceHead != null">`INVOICE_HEAD` = #{invoiceHead}, </if>
+			<if test="invoiceAddress != null">`INVOICE_ADDRESS` = #{invoiceAddress}, </if>
+			<if test="invoiceStatus != null">`INVOICE_STATUS` = #{invoiceStatus}, </if>
+			<if test="deliveryMethod != null">`DELIVERY_METHOD` = #{deliveryMethod}, </if>
+			<if test="deliveryCredential != null">`DELIVERY_CREDENTIAL` = #{deliveryCredential}, </if>
+			<if test="deliveryComment != null">`DELIVERY_COMMENT` = #{deliveryComment}, </if>
+			<if test="orderTime != null">`ORDER_TIME` = #{orderTime}, </if>
+			<if test="memberId != null">`MEMBER_ID` = #{memberId}, </if>
+			<if test="isDelete != null">`IS_DELETE` = #{isDelete}, </if>
+			<if test="providerId != null">`PROVIDER_ID` = #{providerId}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_ORDER where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_ORDER where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="queryOrderNumToday" resultType="int">
+    SELECT COUNT(ORDER_NO) orderStatus FROM T_YUN_ORDER WHERE CAST(ORDER_TIME AS signed) = cast(sysdate() AS signed)
+	</select>
+</mapper>

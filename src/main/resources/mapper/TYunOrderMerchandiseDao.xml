@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunOrderMerchandiseDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunOrderMerchandiseEntity" id="tYunOrderMerchandiseMap">
+        <result property="id" column="ID"/>
+        <result property="orderId" column="ORDER_ID"/>
+        <result property="specificationId" column="SPECIFICATION_ID"/>
+        <result property="amount" column="AMOUNT"/>
+        <result property="orderMerchandiseId" column="ORDER_MERCHANDISE_ID"/>
+        <result property="qualityScore" column="QUALITY_SCORE"/>
+        <result property="priceScore" column="PRICE_SCORE"/>
+        <result property="serviceScore" column="SERVICE_SCORE"/>
+        <result property="comments" column="COMMENTS"/>
+        <result property="price" column="PRICE"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunOrderMerchandiseEntity">
+		select * from T_YUN_ORDER_MERCHANDISE where ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yun.entity.TYunOrderMerchandiseEntity">
+		select * from T_YUN_ORDER_MERCHANDISE
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by ID desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="getBuyPrice" resultType="io.yun.dto.BaikeIndexDto">
+		SELECT A.MEMBER_ID,A.ORDER_TIME as createTime,B.PRICE as buyPrice
+		FROM T_YUN_ORDER A LEFT JOIN T_YUN_ORDER_MERCHANDISE B
+        ON A.ID=B.ORDER_ID
+        where B.PRODUCT_ID= #{value}
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_ORDER_MERCHANDISE 
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunOrderMerchandiseEntity">
+		<selectKey keyProperty="id" resultType="java.lang.String"
+				   order="BEFORE">
+			select replace(uuid(),'-','') from dual
+		</selectKey>
+		insert into T_YUN_ORDER_MERCHANDISE
+		(
+			`ID`, 
+			`ORDER_ID`, 
+			`SPECIFICATION_ID`, 
+			`AMOUNT`, 
+			`ORDER_MERCHANDISE_ID`, 
+			`QUALITY_SCORE`, 
+			`PRICE_SCORE`, 
+			`SERVICE_SCORE`, 
+			`COMMENTS`, 
+			`PRICE`
+		)
+		values
+		(
+			#{id}, 
+			#{orderId}, 
+			#{specificationId}, 
+			#{amount}, 
+			#{orderMerchandiseId}, 
+			#{qualityScore}, 
+			#{priceScore}, 
+			#{serviceScore}, 
+			#{comments}, 
+			#{price}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunOrderMerchandiseEntity">
+		update T_YUN_ORDER_MERCHANDISE 
+		<set>
+			<if test="orderId != null">`ORDER_ID` = #{orderId}, </if>
+			<if test="specificationId != null">`SPECIFICATION_ID` = #{specificationId}, </if>
+			<if test="amount != null">`AMOUNT` = #{amount}, </if>
+			<if test="orderMerchandiseId != null">`ORDER_MERCHANDISE_ID` = #{orderMerchandiseId}, </if>
+			<if test="qualityScore != null">`QUALITY_SCORE` = #{qualityScore}, </if>
+			<if test="priceScore != null">`PRICE_SCORE` = #{priceScore}, </if>
+			<if test="serviceScore != null">`SERVICE_SCORE` = #{serviceScore}, </if>
+			<if test="comments != null">`COMMENTS` = #{comments}, </if>
+			<if test="price != null">`PRICE` = #{price}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_ORDER_MERCHANDISE where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_ORDER_MERCHANDISE where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

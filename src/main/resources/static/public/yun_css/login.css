@@ -1,0 +1,176 @@
+.loginTop{
+    height: 100px;
+    line-height: 100px;
+}
+input{
+    outline:none;
+}
+.loginTop img{
+    width: 170px;
+}
+.welcome{
+    font-size: 2.2rem;
+    color: #444;
+    padding: 0 20px;
+}
+.service{
+    color: #333;
+    font-size: 1.8rem;
+    height: 100px;
+}
+.serviceCall{
+    color: #fb5651;
+    padding: 0 10px;
+}
+.serviceTime{
+    font-size: 1.2rem;
+    padding-left: 10px;
+}
+.loginMid{
+    background: url("/public/img/login.jpg") no-repeat center;
+    background-size:cover;
+    height: 520px;
+}
+.registerMid{
+    background: url("/public/img/register.jpg") no-repeat center;
+    background-size:cover;
+}
+.loginForm{
+    width: 400px;
+    height: 370px;
+    background: #ffffff;
+    margin-top: 76px;
+    padding: 30px 36px;
+}
+.registerForm{
+    width: 400px;
+    height: 400px;
+    background: #ffffff;
+    margin-top: 61px;
+    padding: 30px 36px;
+}
+.loginTitle{
+    height: 40px;
+    line-height: 40px;
+}
+.loginW{
+    font-size: 2.4rem;
+}
+.loginMid a{
+    color: #2776bc;
+    font-size: 1.4rem;
+}
+.loginInput {
+    width: 100%;
+    height: 40px;
+    margin: 10px 0;
+}
+.loginInput label{
+    width: 40px;
+    height: 40px;
+    border: 1px solid #cccccc;
+    border-right: none;
+    float: left;
+    position: relative;
+}
+.loginInput input{
+    width: 288px;
+    height: 40px;
+    float: left;
+    border: 1px solid #cccccc;
+    border-left: none;
+}
+.icon-people{
+    display: block;
+    position: absolute;
+    font-size: 2.6rem;
+    left: 5px;
+    top: 0px;
+    color: #2776bc;
+}
+.icon-mima{
+    display: block;
+    position: absolute;
+    font-size: 2.2rem;
+    left: 8px;
+    top: 4px;
+    color: #2776bc;
+}
+.loginCheck{
+    margin-top: 40px;
+}
+.autoLogin{
+    font-size: 1.4rem;
+}
+.loginBtn{
+  margin-top: 0px;
+}
+.loginBtn button{
+    width: 100%;
+    height: 48px;
+    background: #2776bc;
+    color: #ffffff;
+    border: none;
+    font-size: 1.6rem;
+}
+.registerMid input{
+    height: 35px;
+    margin-bottom: 10px;
+    border: 1px solid #cccccc;
+    padding-left: 10px;
+}
+.form-group{
+    margin: 0;
+    position: relative;
+}
+.form-control{
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555555;
+    background-color: #ffffff;
+    background-image: none;
+    border: 1px solid #cccccc;
+    border-radius: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+.help-block{
+
+
+}
+.largeInput input{
+    width: 100%;
+}
+.registerCheck{
+    margin-top:30px;
+}
+.registerCheck input{
+    width: 13px;
+    height: 13px;
+}
+.registerCheck>div{
+    height: 30px;
+}
+.smallInput input{
+    width:60% ;
+    float: left;
+}
+.smallInput button{
+    width: 25%;
+    margin-left: 6%;
+    height: 35px;
+    float: left;
+    border: none;
+    background: #ff771c;
+    color: #ffffff;
+}
+input[type=checkbox]{
+    margin-right: 10px;
+}

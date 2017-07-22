@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunVerifyCodeDao">
+
+	<insert id="save" parameterType="io.yun.entity.TYunVerifyCodeEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into T_YUN_VERIFY_CODE
+		(
+		    `id`,
+			`phone`,
+			`code`,
+			`expire`
+		)
+		values
+			(
+			    #{id},
+				#{phone},
+				#{code},
+				#{expire}
+			)
+	</insert>
+	
+	<select id="queryByMobileAndVerifyCode" resultType="io.yun.entity.TYunVerifyCodeEntity">
+		select * from T_YUN_VERIFY_CODE
+		    where
+			
+		    `phone` = #{mobile,jdbcType=VARCHAR} 
+		     and `code` = #{verifyCode,jdbcType=VARCHAR} 
+			
+	
+		
+	
+	</select>
+
+</mapper>

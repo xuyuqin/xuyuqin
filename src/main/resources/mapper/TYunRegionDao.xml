@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunRegionDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunRegionEntity" id="tYunRegionMap">
+        <result property="code" column="CODE"/>
+        <result property="name" column="NAME"/>
+        <result property="level" column="LEVEL"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunRegionEntity">
+		select * from T_YUN_REGION where CODE = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yun.entity.TYunRegionEntity">
+		select * from T_YUN_REGION
+		where 1 = 1
+		<if test="level != null and level.trim()  != null">
+			and LEVEL = #{level}
+		</if>
+		<if test="pcode != null and pcode.trim()  != null">
+			and LEVEL = 2 and code like CONCAT(substring(#{pcode},1,2),'%')
+		</if>
+		<if test="ccode != null and ccode.trim()  != null">
+			and LEVEL = 3 and code like CONCAT(substring(#{ccode},1,4),'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by CODE desc
+			</otherwise>
+        </choose>
+		<!--<if test="offset != null and limit != null">-->
+			<!--limit #{offset}, #{limit}-->
+		<!--</if>-->
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_REGION 
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunRegionEntity">
+		insert into T_YUN_REGION
+		(
+			`CODE`, 
+			`NAME`, 
+			`LEVEL`
+		)
+		values
+		(
+			#{code}, 
+			#{name}, 
+			#{level}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunRegionEntity">
+		update T_YUN_REGION 
+		<set>
+			<if test="name != null">`NAME` = #{name}, </if>
+			<if test="level != null">`LEVEL` = #{level}</if>
+		</set>
+		where CODE = #{code}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_REGION where CODE = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_REGION where CODE in 
+		<foreach item="code" collection="array" open="(" separator="," close=")">
+			#{code}
+		</foreach>
+	</delete>
+
+</mapper>

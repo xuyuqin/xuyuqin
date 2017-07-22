@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.unicall.dao.SysRegisterDao">
+
+    <!-- ****************以下LoginController使用 save与SysRegisterController公用*********************-->
+	
+	<select id="queryByRegisterMobile" resultType="io.unicall.entity.SysRegisterEntity">
+		select * from sys_register where mobile = #{registername}
+	</select>
+	
+	<insert id="save" parameterType="io.unicall.entity.SysRegisterEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_register
+		(
+			`id`, 
+			`name`,  
+			`mobile`,
+			`email`, 
+			`password`, 
+			`avatar`,
+			`qq`,
+			`mobileVerified`,
+			`emailVerified`, 
+			`createTime`,
+ 			`updateTime`,
+			`salt`,
+			`isProvider`,
+			`address` ,
+			`level`,
+			`trader`
+		)
+		values
+		(
+			#{id}, 
+		    #{name}, 
+			#{mobile}, 
+     		#{email},  
+			#{password}, 
+			#{avatar}, 
+			#{qq},
+			#{mobileVerified},
+			#{emailVerified}, 
+			#{createTime},
+			#{updateTime},
+			#{salt},
+			#{isProvider},
+			#{address}, 
+			#{level}, 
+			#{trader} 
+		)
+	</insert>
+	
+	<select id="queryObject" resultType="io.unicall.entity.SysRegisterEntity">
+		select * from sys_register where mobile = #{mobile}
+	</select>
+	 <!-- *****************以上LoginController使用 save与SysRegisterController公用******************-->
+	 
+	 
+	 
+	 <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.unicall.entity.SysRegisterEntity" id="sysRegisterMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+        <result property="avatar" column="avatar"/>
+        <result property="qq" column="qq"/>
+        <result property="mobileVerified" column="mobileVerified"/>
+        <result property="emailVerified" column="emailVerified"/>
+        <result property="createTime" column="createTime"/>
+        <result property="updateTime" column="updateTime"/>
+        <result property="salt" column="salt"/>
+        <result property="isProvider" column="isProvider"/>
+        <result property="address" column="address"/>
+        <result property="level" column="level"/>
+        <result property="trader" column="trader"/>
+    </resultMap>
+    
+    
+    
+     <!-- ******************以下SysRegisterController使用***********************-->
+     
+    <select id="queryObject1" resultType="io.unicall.entity.SysRegisterEntity">
+		select * from sys_register where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.unicall.entity.SysRegisterEntity">
+		select * from sys_register
+         <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise> 
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sys_register 
+	</select>
+	
+	<update id="update" parameterType="io.unicall.entity.SysRegisterEntity">
+		update sys_register 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="mobile != null">`mobile` = #{mobile}, </if>
+			<if test="email != null">`email` = #{email}, </if>
+			<if test="password != null">`password` = #{password}, </if>
+			<if test="avatar != null">`avatar` = #{avatar}, </if>
+			<if test="qq != null">`qq` = #{qq}, </if>
+			<if test="mobileVerified != null">`mobileVerified` = #{mobileVerified}, </if>
+			<if test="emailVerified != null">`emailVerified` = #{emailVerified}, </if>
+			<if test="createTime != null">`createTime` = #{createTime}, </if>
+			<if test="updateTime != null">`updateTime` = #{updateTime}, </if>
+			<if test="salt != null">`salt` = #{salt}, </if>
+			<if test="isProvider != null">`isProvider` = #{isProvider}, </if>
+			<if test="address != null">`address` = #{address},</if>
+			<if test="level != null">`level` = #{level},</if>
+			<if test="trader != null">`trader` = #{trader}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<update id="updatePW" parameterType="io.unicall.entity.SysRegisterEntity">
+		update sys_register 
+		  set		
+			password = #{password}
+		  where mobile = #{mobile}
+	</update>
+
+	<update id="update1" parameterType="io.yun.dto.MyInfoDto">
+		update sys_register
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="mobile != null">`mobile` = #{mobile}, </if>
+			<if test="email != null">`email` = #{email}, </if>
+			<if test="avatar != null">`avatar` = #{avatar}, </if>
+			<if test="qq != null">`qq` = #{qq}, </if>
+			<if test="address != null">`address` = #{address},</if>
+			<if test="emailVerified != null">`emailVerified` = #{emailVerified}, </if>
+			<if test="mobileVerified != null">`mobileVerified` = #{mobileVerified}, </if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sys_register where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sys_register where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	<!-- *****************以上SysRegisterController使用*******************-->
+	
+	<!-- ***********************以下授权验证使用********************-->
+	<!-- 查询用户的所有权限 -->
+	<select id="queryAllPerms" resultType="string">
+		select  p.requiresPermission from sys_register_role_permission p
+           left JOIN sys_register r ON p.role_id = r.level
+            where r.id = #{userId}
+	</select>
+	
+	<!-- 查询用户角色权限 -->
+	<select id="queryRole" resultType="string">
+		select  p.hasRole from sys_register_role_permission p
+           left JOIN sys_register r ON p.role_id = r.level
+            where r.id = #{userId}	
+	</select>
+	<!-- ***********************以上授权验证使用********************-->
+
+</mapper>

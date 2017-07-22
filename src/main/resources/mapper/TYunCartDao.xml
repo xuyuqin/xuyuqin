@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunCartDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunCartEntity" id="tYunCartMap">
+        <result property="id" column="ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="merchandiseId" column="MERCHANDISE_ID"/>
+        <result property="providerId" column="PROVIDER_ID"/>
+        <result property="amount" column="AMOUNT"/>
+        <result property="addTime" column="ADD_TIME"/>
+        <result property="price" column="PRICE"/>
+        <result property="specificationId" column="SPECIFICATION_ID"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunCartEntity">
+		select * from T_YUN_CART where ID = #{value}
+	</select>
+
+	<select id="findByMemberAndMerchandise" resultType="io.yun.entity.TYunCartEntity">
+		select * from T_YUN_CART
+		where MEMBER_ID = #{memberId} AND MERCHANDISE_ID = #{merchandiseId}
+	</select>
+
+	<select id="queryList" resultType="io.yun.entity.TYunCartEntity">
+		select * from T_YUN_CART
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by ID desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_CART 
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunCartEntity">
+		<selectKey keyProperty="id" resultType="java.lang.String"
+				   order="BEFORE">
+			select replace(uuid(),'-','') from dual
+		</selectKey>
+		insert into T_YUN_CART
+		(
+			`ID`, 
+			`MEMBER_ID`, 
+			`MERCHANDISE_ID`, 
+			`PROVIDER_ID`, 
+			`AMOUNT`, 
+			`ADD_TIME`, 
+			`PRICE`, 
+			`SPECIFICATION_ID`
+		)
+		values
+		(
+			#{id}, 
+			#{memberId}, 
+			#{merchandiseId}, 
+			#{providerId}, 
+			#{amount}, 
+			#{addTime}, 
+			#{price}, 
+			#{specificationId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunCartEntity">
+		update T_YUN_CART 
+		<set>
+			<if test="memberId != null">`MEMBER_ID` = #{memberId}, </if>
+			<if test="merchandiseId != null">`MERCHANDISE_ID` = #{merchandiseId}, </if>
+			<if test="providerId != null">`PROVIDER_ID` = #{providerId}, </if>
+			<if test="amount != null">`AMOUNT` = #{amount}, </if>
+			<if test="addTime != null">`ADD_TIME` = #{addTime}, </if>
+			<if test="price != null">`PRICE` = #{price}, </if>
+			<if test="specificationId != null">`SPECIFICATION_ID` = #{specificationId}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_CART where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_CART where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

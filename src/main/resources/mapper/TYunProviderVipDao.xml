@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunProviderVipDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunProviderVipEntity" id="tYunProviderVipMap">
+        <result property="id" column="ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="providerId" column="PROVIDER_ID"/>
+        <result property="vipRank" column="VIP_RANK"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunProviderVipEntity">
+		select * from T_YUN_PROVIDER_VIP where ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yun.entity.TYunProviderVipEntity">
+		select * from T_YUN_PROVIDER_VIP
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by ID desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_PROVIDER_VIP 
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunProviderVipEntity">
+		insert into T_YUN_PROVIDER_VIP
+		(
+			`ID`, 
+			`MEMBER_ID`,
+			`PROVIDER_ID`, 
+			`VIP_RANK`
+		)
+		values
+		(
+			#{id}, 
+			#{memberId},
+			#{providerId}, 
+			#{vipRank}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunProviderVipEntity">
+		update T_YUN_PROVIDER_VIP 
+		<set>
+			<if test="vipId != null">`MEMBER_ID` = #{memberId}, </if>
+			<if test="providerId != null">`PROVIDER_ID` = #{providerId}, </if>
+			<if test="vipRank != null">`VIP_RANK` = #{vipRank}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_PROVIDER_VIP where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_PROVIDER_VIP where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="getByProviderIdAndMemberId" resultType="io.yun.entity.TYunProviderVipEntity">
+				select * from T_YUN_PROVIDER_VIP where MEMBER_ID = #{memberId} AND PROVIDER_ID = #{providerId}
+	</select>
+</mapper>

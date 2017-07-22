@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunMyProviderDao">
+
+	<select id="queryList" resultType="io.yun.entity.TYunMyProviderEntry">
+		SELECT
+		T_YUN_PROVIDER.`NAME` AS 'providerName',
+		T_YUN_PRODUCT.`NAME` AS 'productName',
+		T_YUN_MEMBER_PROVIDER.title,
+		T_YUN_MEMBER_PROVIDER.provider_id AS 'providerId'
+		FROM
+		T_YUN_PROVIDER,
+		T_YUN_PRODUCT,
+		T_YUN_MEMBER_PROVIDER,
+	  	T_YUN_PROVIDER_PRODUCT
+		WHERE
+		T_YUN_PROVIDER.ID = T_YUN_MEMBER_PROVIDER.provider_id
+		AND T_YUN_PROVIDER_PRODUCT.provider_id = T_YUN_MEMBER_PROVIDER.provider_id
+		AND T_YUN_PRODUCT.ID = T_YUN_PROVIDER_PRODUCT.product_id
+		AND T_YUN_MEMBER_PROVIDER.member_id = #{memberId}
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryTotal" resultType="int">
+		select count(*)
+		FROM T_YUN_PROVIDER,
+		T_YUN_PRODUCT,
+		T_YUN_MEMBER_PROVIDER,
+		T_YUN_PROVIDER_PRODUCT
+		WHERE
+		T_YUN_PROVIDER.ID = T_YUN_MEMBER_PROVIDER.provider_id
+		AND T_YUN_PROVIDER_PRODUCT.provider_id = T_YUN_MEMBER_PROVIDER.provider_id
+		AND T_YUN_PRODUCT.ID = T_YUN_PROVIDER_PRODUCT.product_id
+		AND T_YUN_MEMBER_PROVIDER.member_id = #{memberId}
+	</select>
+
+
+
+</mapper>

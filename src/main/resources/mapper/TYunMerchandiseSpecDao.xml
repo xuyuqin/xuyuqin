@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunMerchandiseSpecDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunMerchandiseSpecEntity" id="tYunMerchandiseSpecMap">
+        <result property="id" column="ID"/>
+        <result property="merchandiseId" column="MERCHANDISE_ID"/>
+        <result property="specification" column="SPECIFICATION"/>
+        <result property="price" column="PRICE"/>
+        <result property="weight" column="WEIGHT"/>
+        <result property="stock" column="STOCK"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunMerchandiseSpecEntity">
+		select * from T_YUN_MERCHANDISE_SPEC where ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yun.entity.TYunMerchandiseSpecEntity">
+		select * from T_YUN_MERCHANDISE_SPEC
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by ID desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_MERCHANDISE_SPEC 
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunMerchandiseSpecEntity">
+		insert into T_YUN_MERCHANDISE_SPEC
+		(
+			`ID`, 
+			`MERCHANDISE_ID`, 
+			`SPECIFICATION`, 
+			`PRICE`, 
+			`WEIGHT`, 
+			`STOCK`
+		)
+		values
+		(
+			#{id}, 
+			#{merchandiseId}, 
+			#{specification}, 
+			#{price}, 
+			#{weight}, 
+			#{stock}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunMerchandiseSpecEntity">
+		update T_YUN_MERCHANDISE_SPEC 
+		<set>
+			<if test="merchandiseId != null">`MERCHANDISE_ID` = #{merchandiseId}, </if>
+			<if test="specification != null">`SPECIFICATION` = #{specification}, </if>
+			<if test="price != null">`PRICE` = #{price}, </if>
+			<if test="weight != null">`WEIGHT` = #{weight}, </if>
+			<if test="stock != null">`STOCK` = #{stock}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_MERCHANDISE_SPEC where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_MERCHANDISE_SPEC where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="getByMerchandiseId" resultType="io.yun.entity.TYunMerchandiseSpecEntity">
+		select * from T_YUN_MERCHANDISE_SPEC
+		where MERCHANDISE_ID = #{merchandiseId}
+	</select>
+</mapper>

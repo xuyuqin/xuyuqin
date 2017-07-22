@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunMerchandiseImageDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunMerchandiseImageEntity" id="tYunMerchandiseImageMap">
+        <result property="id" column="ID"/>
+        <result property="merchandiseId" column="MERCHANDISE_ID"/>
+        <result property="url" column="URL"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunMerchandiseImageEntity">
+		select * from T_YUN_MERCHANDISE_IMAGE where ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yun.entity.TYunMerchandiseImageEntity">
+		select * from T_YUN_MERCHANDISE_IMAGE
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by ID desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_MERCHANDISE_IMAGE 
+	</select>
+
+	<select id="queryTotal2" resultType="int">
+		select count(*) from T_YUN_MERCHANDISE_IMAGE
+		where MERCHANDISE_ID = #{merchandiseId}
+		AND ID IN
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+	</select>
+
+	<insert id="save" parameterType="io.yun.entity.TYunMerchandiseImageEntity">
+		insert into T_YUN_MERCHANDISE_IMAGE
+		(
+			`ID`, 
+			`MERCHANDISE_ID`, 
+			`URL`
+		)
+		values
+		(
+			#{id}, 
+			#{merchandiseId}, 
+			#{url}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunMerchandiseImageEntity">
+		update T_YUN_MERCHANDISE_IMAGE 
+		<set>
+			<if test="merchandiseId != null">`MERCHANDISE_ID` = #{merchandiseId}, </if>
+			<if test="url != null">`URL` = #{url}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_MERCHANDISE_IMAGE where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_MERCHANDISE_IMAGE where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="getByMerchandiseId" resultType="io.yun.entity.TYunMerchandiseImageEntity">
+		select * from T_YUN_MERCHANDISE_IMAGE
+		where MERCHANDISE_ID = #{merchandiseId}
+	</select>
+
+</mapper>

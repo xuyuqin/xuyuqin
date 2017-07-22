@@ -1,0 +1,383 @@
+.row {
+    padding: 0;
+    margin: 0;
+}
+
+.mallTop {
+    height: 250px;
+    background: url("/public/img/mallBanner.jpg") no-repeat center;
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.mallTopD {
+    margin-top: 80px;
+    margin-left: 140px;
+    color: #333;
+    font-size: 2.4rem;
+}
+
+.mallTopD1 {
+    margin-top: 20px;
+}
+
+.mallTopA {
+    margin-left: 140px;
+    width: 120px;
+    height: 40px;
+    display: block;
+    background: #317ee7;
+    color: #ffffff;
+    font-size: 1.6rem;
+    line-height: 40px;
+    text-align: center;
+}
+
+.mallTopD1 a:hover {
+    color: #ffffff;
+}
+
+.mallNav {
+    padding: 0 15px;
+    margin-top: 10px;
+    border: 1px solid #eaeaea;
+    color: #555;
+    font-size: 1.2rem;
+}
+
+.mallD {
+    /*line-height: 40px;*/
+    border-bottom: 1px solid #eaeaea;
+    padding-left: 20px;
+}
+
+.navT {
+    line-height: 40px;
+    width: 30px;
+}
+
+.navBtn {
+    margin-top: 10px;
+    width: 1078px;
+}
+
+.navBtn ul li {
+    float: left;
+    padding: 0 10px;
+    height: 20px;
+    line-height: 20px;
+    margin-right: 20px;
+    color: #333;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.navBtn ul .active {
+    background: #317ee7;
+    color: #ffffff;
+}
+
+.mallUlInput li {
+    height: 50px;
+    line-height: 50px;
+}
+
+.mallUlInput li input {
+    width: 180px;
+    height: 30px;
+}
+
+.mallInput {
+    padding-left: 20px;
+}
+
+.mallInput label {
+    padding-right: 10px;
+}
+
+.orangeBtnMall {
+    width: 100px;
+    height: 30px;
+    color: #ffffff;
+    border: none;
+    margin-top: 60px;
+    background: #ff771c;
+}
+
+.mallI {
+    padding: 10px 0;
+}
+
+.mallL {
+    margin-top: 30px;
+    color: #555;
+}
+
+.mallListTopBar {
+    height: 40px;
+}
+
+.mallListTopBar .pull-left {
+    height: 40px;
+    line-height: 40px;
+}
+.mallListUl{
+    margin: 0;
+}
+.mallListUl li {
+    float: left;
+    width: auto;
+    padding: 0 10px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    position: relative;
+    cursor: pointer;
+}
+
+.mallListUl li + li:before {
+    position: absolute;
+    content: '';
+    left: 0;
+    top: 10px;
+    width: 1px;
+    height: 20px;
+    background: #eaeaea;
+}
+
+.mallTitle {
+    font-size: 1.8rem;
+    color: #333;
+    padding: 0 20px;
+}
+
+.mallLeftA {
+    color: #317ee7;
+    padding: 0 20px;
+}
+
+.mallList {
+    border-top: 1px solid #317ee7;
+    border-left: 1px solid #eaeaea;
+    border-right: 1px solid #eaeaea;
+}
+
+.mallListOne {
+    height: 260px;
+    border-bottom: 1px solid #eaeaea;
+    position: relative;
+}
+
+.mallListOne + .mallListOne, .mallListOneD + .mallListOneD {
+    border-left: 1px solid #eaeaea;
+}
+
+.mallListOne1:nth-child(6n+1) {
+    border-left: none;
+}
+
+.mallListOneD:nth-child(3n+1) {
+    border-left: none;
+}
+
+.mallListOne img {
+    display: block;
+    margin: 20px auto;
+    width: 90px;
+    height: 123px;
+}
+
+.mallListOne p {
+    text-align: center;
+    height: 20px;
+    overflow: hidden;
+}
+
+.mallPrice {
+    color: #f47773;
+}
+
+.categoryActive {
+    border-top: 3px solid #317ee7;
+    border-left: 1px solid #317ee7;
+    border-right: 1px solid #317ee7;
+    position: relative;
+}
+
+.categoryActive:after {
+    position: absolute;
+    content: '';
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #ffffff;
+}
+
+.mallListTwo {
+    height: 520px;
+}
+
+.mallTwoImg {
+    width: 100%;
+    height: 520px;
+}
+
+.mallListTwo .mallListOne {
+    float: left;
+    width: 20%;
+    height: 260px;
+}
+
+.mallListThree .mallListOneD {
+    width: 33.333333%;
+    height: 260px;
+    float: left;
+    padding: 15px 25px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.mallListOneD {
+    position: relative;
+}
+
+.hoverDiv {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    color: #ffffff;
+    padding: 20px;
+}
+
+.hoverDiv p {
+    text-align: center;
+    overflow: hidden;
+    height: 30px;
+    line-height: 30px;
+    margin: 0;
+}
+.hoverDiv .cangku{
+    margin-top: 20px;
+}
+
+.mallListOneD h4 {
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    height: 40px;
+    line-height: 40px;
+    font-size: 1.6rem;
+    border-bottom: 1px solid #eaeaea;
+    margin-bottom: 10px;
+}
+
+.mallListOneD img {
+    display: block;
+    width: 100px;
+    height: 100px;
+}
+
+.mallListOneD p {
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.mallListOneDD {
+    margin-top: 30px;
+}
+
+.mallListOneD .mallPrice {
+    font-size: 1.6rem;
+    padding: 10px 0;
+}
+
+.bottomLink {
+    margin-top: 20px;
+    color: #555;
+    font-size: 1.2rem;
+}
+
+.bottomLinkT {
+    font-size: 2.4rem;
+    color: #333;
+    height: 40px;
+    line-height: 40px;
+}
+
+.bottomLink li {
+    text-align: center;
+    position: relative;
+    height: 80px;
+}
+
+.bottomLink li + li:before {
+    position: absolute;
+    content: '';
+    left: 0;
+    top: 20px;
+    height: 30px;
+    width: 1px;
+    background: #eaeaea;
+}
+
+.bottomLink li img {
+    margin-top: 10px;
+}
+
+.bottomLink ul {
+    height: 80px;
+    border: 1px solid #eaeaea;
+}
+.allC{
+    height: 40px;
+    border: 1px solid #eaeaea;
+    margin-top: 20px;
+    background: #f8f8f8;
+    line-height: 40px;
+}
+.allC button{
+    display: block;
+    float: left;
+    height: 38px;
+    padding: 0 35px;
+    border: none;
+    border-right: 1px solid #eaeaea;
+}
+.active{
+    background: #317ee7;
+    color: #ffffff;
+    text-decoration: none;
+}
+th{
+    background: #f8f8f8;
+}
+.table > thead > tr > th{
+    border-bottom: 1px solid #eaeaea;
+}
+.listTitle{
+    height: 36px;
+    background: #f8f8f8;
+    line-height: 36px;
+}
+.listTitle li{
+    float: left;
+}
+.mallListAll li{
+    float: left;
+    height: 80px;
+    word-break:keep-all;           /* 不换行 */
+    white-space:nowrap;          /* 不换行 */
+    overflow:hidden;               /* 内容超出宽度时隐藏超出部分的内容 */
+    text-overflow:ellipsis;
+    line-height: 80px;
+    border-bottom: 1px solid #eaeaea;
+}
+.operation button{
+    border: none;
+    background: none;
+    outline: none;
+}

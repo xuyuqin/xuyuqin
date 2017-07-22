@@ -1,0 +1,29 @@
+.tab-content{
+  border: 1px solid #ddd;
+  border-top: 0 !important;
+}
+thead th{
+  padding: 20px 0 20px 10px !important;
+  width: 12.5%;
+  font-weight: normal !important;
+  border: none !important;
+  color: #949494 !important
+}
+thead tr{
+  background: #E7E5E6
+}
+td{
+  padding-left: 10 !important;
+  padding-right: 0 !important:;
+}
+.nav-tabs > li > a:hover{
+  background-color: #FFFFFF !important
+}
+.nav > li > a{
+  padding: 0 10px;
+  color: #2f2f2f
+}
+.panel-footer{
+  border: none;
+  background: #E7E5E6
+}

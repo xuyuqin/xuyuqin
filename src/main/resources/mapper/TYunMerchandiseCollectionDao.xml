@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunMerchandiseCollectionDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunMerchandiseCollectionEntity" id="tYunMerchandiseCollectionMap">
+        <result property="id" column="ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="merchandiseId" column="MERCHANDISE_ID"/>
+        <result property="specificationId" column="SPECIFICATION_ID"/>
+        <result property="createTime" column="CREATE_TIME"/>
+    </resultMap>
+
+	<select id="find" resultType="io.yun.entity.TYunMerchandiseCollectionEntity">
+		select * from T_YUN_MERCHANDISE_COLLECTION where  MEMBER_ID = #{memberId} and MERCHANDISE_ID = #{merchandiseId}
+	</select>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunMerchandiseCollectionEntity">
+		select * from T_YUN_MERCHANDISE_COLLECTION where ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yun.entity.TYunMerchandiseCollectionEntity">
+		select * from T_YUN_MERCHANDISE_COLLECTION
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by ID desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_MERCHANDISE_COLLECTION 
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunMerchandiseCollectionEntity">
+		<selectKey keyProperty="id" resultType="java.lang.String"
+				   order="BEFORE">
+			select replace(uuid(),'-','') from dual
+		</selectKey>
+		insert into T_YUN_MERCHANDISE_COLLECTION
+		(
+			`ID`, 
+			`MEMBER_ID`, 
+			`MERCHANDISE_ID`, 
+			`SPECIFICATION_ID`, 
+			`CREATE_TIME`
+		)
+		values
+		(
+			#{id}, 
+			#{memberId}, 
+			#{merchandiseId}, 
+			#{specificationId}, 
+			#{createTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunMerchandiseCollectionEntity">
+		update T_YUN_MERCHANDISE_COLLECTION 
+		<set>
+			<if test="memberId != null">`MEMBER_ID` = #{memberId}, </if>
+			<if test="merchandiseId != null">`MERCHANDISE_ID` = #{merchandiseId}, </if>
+			<if test="specificationId != null">`SPECIFICATION_ID` = #{specificationId}, </if>
+			<if test="createTime != null">`CREATE_TIME` = #{createTime}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_MERCHANDISE_COLLECTION where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_MERCHANDISE_COLLECTION where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunTagDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunTagEntity" id="tYunTagMap">
+        <result property="name" column="NAME"/>
+        <result property="id" column="ID"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunTagEntity">
+		select * from T_YUN_TAG where ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yun.entity.TYunTagEntity">
+		select DISTINCT NAME,ID from T_YUN_TAG
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_TAG 
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunTagEntity">
+		insert into T_YUN_TAG
+		(
+			`NAME`, 
+			`ID`
+		)
+		values
+		(
+			#{name}, 
+			#{id}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunTagEntity">
+		update T_YUN_TAG 
+		<set>
+			<if test="name != null">`NAME` = #{name}, </if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_TAG where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_TAG where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

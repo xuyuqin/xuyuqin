@@ -1,0 +1,73 @@
+
+.panel-heading {
+    background: #327CBB !important;
+    border-radius: 0 !important;
+    color: #FFFFFF !important;
+    padding: 15px 15px !important;
+    border: none !important;
+    height: 48px
+}
+
+.panel {
+    border-radius: 0 !important;
+    border: none !important;
+
+}
+
+h3 {
+    font-weight: normal !important;
+}
+
+.orderlistMoney {
+    font-size: 17px;
+    position: absolute;
+    top: -5px;
+}
+.orderlistImg{
+    width: 100px;
+  height: 100px;
+  float: left;
+}
+.orderlistTable *{
+  border: none !important
+}
+.orderlistTable th{
+  font-weight: normal;
+  border-bottom: 1px dashed #ddd !important;
+}
+.orderlistTable th:first-child{
+
+   text-align: left !important;
+}
+#tMain tr{
+  border-top: 1px dashed #ddd !important
+}
+#tMain tr:first-child{
+  border-top: none !important
+}
+#tMain tr:first-child td{
+  padding-top: 30px
+}
+#tMain tr td:first-child{
+   width: 300px;
+    text-align: left !important;
+}
+td,th{
+  text-align: center;
+  vertical-align:baseline;
+}
+.orderlistTitle{
+  color: #D85450;
+  font-size: 15px;
+  white-space: nowrap;
+}
+.orderInfoListHang{
+  margin-bottom: 10px
+}
+.orderInfoListHang div{
+  float: left;
+  min-width: 150px;
+  padding-right: 10px;
+  height: 30px;
+  padding-top: 10px;
+}

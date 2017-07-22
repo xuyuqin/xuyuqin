@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunMerchandiseCommitsDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunMerchandiseCommitsEntity" id="tYunMerchandiseCommitsMap">
+        <result property="id" column="ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="merchandiseId" column="MERCHANDISE_ID"/>
+        <result property="orderId" column="ORDER_ID"/>
+        <result property="commits" column="COMMITS"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+        <result property="reply" column="REPLY"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunMerchandiseCommitsEntity">
+		select * from T_YUN_MERCHANDISE_COMMITS where ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yun.entity.TYunMerchandiseCommitsEntity">
+		select * from T_YUN_MERCHANDISE_COMMITS
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by ID desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_MERCHANDISE_COMMITS 
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunMerchandiseCommitsEntity">
+		insert into T_YUN_MERCHANDISE_COMMITS
+		(
+			`ID`, 
+			`MEMBER_ID`, 
+			`MERCHANDISE_ID`, 
+			`ORDER_ID`, 
+			`COMMITS`, 
+			`CREATE_TIME`, 
+			`UPDATE_TIME`, 
+			`REPLY`
+		)
+		values
+		(
+			#{id}, 
+			#{memberId}, 
+			#{merchandiseId}, 
+			#{orderId}, 
+			#{commits}, 
+			#{createTime}, 
+			#{updateTime}, 
+			#{reply}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunMerchandiseCommitsEntity">
+		update T_YUN_MERCHANDISE_COMMITS 
+		<set>
+			<if test="memberId != null">`MEMBER_ID` = #{memberId}, </if>
+			<if test="merchandiseId != null">`MERCHANDISE_ID` = #{merchandiseId}, </if>
+			<if test="orderId != null">`ORDER_ID` = #{orderId}, </if>
+			<if test="commits != null">`COMMITS` = #{commits}, </if>
+			<if test="createTime != null">`CREATE_TIME` = #{createTime}, </if>
+			<if test="updateTime != null">`UPDATE_TIME` = #{updateTime}, </if>
+			<if test="reply != null">`REPLY` = #{reply}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_MERCHANDISE_COMMITS where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_MERCHANDISE_COMMITS where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="getByMerchandiseId" resultType="io.yun.dto.MerchandiseCommitDto">
+		select A.COMMITS,A.CREATE_TIME,A.REPLY,A.UPDATE_TIME,B.`name`,C.AMOUNT,D.SPECIFICATION
+		from T_YUN_MERCHANDISE_COMMITS AS A
+		LEFT JOIN sys_register AS B ON A.MEMBER_ID=B.id
+		LEFT JOIN T_YUN_ORDER_MERCHANDISE AS C ON A.ORDER_ID=C.ORDER_ID
+		LEFT JOIN T_YUN_MERCHANDISE_SPEC AS D ON C.SPECIFICATION_ID=D.ID
+		WHERE A.MERCHANDISE_ID = #{merchandiseId}
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by ${sidx} ${order}
+			</when>
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="listTotal" resultType="int">
+        select COUNT(*)
+		from T_YUN_MERCHANDISE_COMMITS AS A
+		LEFT JOIN sys_register AS B ON A.MEMBER_ID=B.id
+		LEFT JOIN T_YUN_ORDER_MERCHANDISE AS C ON A.ORDER_ID=C.ORDER_ID
+		LEFT JOIN T_YUN_MERCHANDISE_SPEC AS D ON C.SPECIFICATION_ID=D.ID
+		WHERE A.MERCHANDISE_ID = #{merchandiseId}
+    </select>
+</mapper>

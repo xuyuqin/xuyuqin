@@ -1,0 +1,63 @@
+/**
+ * 百科模块所有页面公共样式
+ */
+.radius-0 {
+    border-radius: 0;
+}
+
+.radius-0 .pagination {
+    margin: 0 0;
+}
+
+.radius-0 .panel-footer {
+    background-color: white;
+}
+
+.panel-header,
+.panel-body {
+    border-width: none;
+    border-style: none;
+}
+
+
+/**
+ * 百科首页样式
+ */
+
+
+ /**
+ * 百科列表页样式
+ */
+.list-group-item {
+    border: 1px solid #ddd;
+}
+
+ /**
+ * 百科详情页样式
+ */
+.img-radius-0 {
+    border: none;
+    padding: 0;
+    border-radius: 0;
+}
+
+.recommend i {
+    color: orange;
+}
+
+.recommend hr {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.recommend:last-of-type hr {
+    display: none;
+}
+
+button.btn-sm {
+    margin-bottom: 3px;
+}
+
+hr {
+    margin-top: 0;
+}

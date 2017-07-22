@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunResourceDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunResourceEntity" id="tYunResourceMap">
+        <result property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="companyHead" column="COMPANY_HEAD"/>
+        <result property="scale" column="SCALE"/>
+        <result property="categoryId" column="CATEGORY_ID"/>
+        <result property="description" column="DESCRIPTION"/>
+        <result property="url" column="URL"/>
+        <result property="uploadTime" column="UPLOAD_TIME"/>
+        <result property="district" column="DISTRICT"/>
+        <result property="providerId" column="PROVIDER_ID"/>
+		<result property="isCollection" column="isCollection"/>
+		<result property="downloadtimes" column="DOWNLOADTIMES"/>
+        <result property="isPermit" column="IS_PERMIT"/>
+        <result property="productnames" column="PRODUCTNAMES"/>
+		<association property="category" column="CATEGORY_ID" select="getCategroy"/>
+		<association property="providername" column="PROVIDER_ID" select="getProvidername"/>
+		<association property="districtname" column="DISTRICT" select="getDistrictname"/>
+    </resultMap>
+
+	<select id="getDistrictname" parameterType="String" resultType="String">
+		select name
+		from T_YUN_REGION
+		where code = #{code}
+	</select>
+
+	<select id="getProvidername" parameterType="String" resultType="String">
+		select name
+		from sys_register
+		where ID = #{id}
+	</select>
+
+	<select id="getCategroy" parameterType="String" resultType="String">
+		select name
+		from T_YUN_CATEGORY
+		where ID = #{id}
+	</select>
+
+	<select id="queryObject" resultMap="tYunResourceMap">
+		select *
+		from T_YUN_RESOURCE t
+		where ID = #{value}
+	</select>
+
+	<select id="queryResource" resultMap="tYunResourceMap">
+		select * ,(select count(*) from T_YUN_RESOURCE_COLLECTION where resource_id=t.id and member_id = #{memberId}) isCollection
+		from T_YUN_RESOURCE t
+		where ID = #{id}
+		<if test="member != null">
+			and PROVIDER_ID = #{member}
+		</if>
+	</select>
+
+	<select id="queryList" resultMap="tYunResourceMap">
+		select * ,(select count(*) from T_YUN_RESOURCE_COLLECTION where resource_id=t.id and member_id = #{memberId}) isCollection
+		from T_YUN_RESOURCE t
+		where 1=1
+        <if test="isPermit != null">
+            and IS_PERMIT = #{isPermit}
+        </if>
+		<if test="name != null and name.trim() != ''">
+			and name like CONCAT('%',#{name},'%')
+		</if>
+		<if test="company != null and company.trim() != ''">
+			and COMPANY_HEAD like CONCAT('%',#{company},'%')
+		</if>
+		<if test="providerId != null">
+			and PROVIDER_ID = #{providerId}
+		</if>
+		<if test="time1 != null and time1.trim() != ''">
+			and UPLOAD_TIME &gt;=#{time1}
+		</if>
+		<if test="time2 != null and time2.trim() != ''">
+			and UPLOAD_TIME &lt;= #{time2}
+		</if>
+		<if test="district != null and district.trim() != ''">
+			and district in(
+			select code from T_YUN_REGION
+			where code = #{district} and level =3
+			or code like CONCAT(substring((select code from T_YUN_REGION where code = #{district} and level =2),1,4),'%')
+			or code like CONCAT(substring((select code from T_YUN_REGION where code = #{district} and level =1),1,2),'%')
+			)
+		</if>
+		<if test="categoryId != null and categoryId.trim() != ''">
+			and CATEGORY_ID in(
+			select id from T_YUN_CATEGORY
+			where id = #{categoryId}
+			or parent in (select id from T_YUN_CATEGORY where id = #{categoryId})
+			)
+		</if>
+		<if test="member != null">
+			and id in(
+			select resource_id from T_YUN_RESOURCE_COLLECTION
+			where member_id = #{member}
+			)
+		</if>
+		<if test="productname != null and productname.trim() != ''">
+			and productnames like CONCAT('%',#{productname},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by ID desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_RESOURCE
+		where 1=1
+        <if test="isPermit != null">
+            and IS_PERMIT = #{isPermit}
+        </if>
+		<if test="name != null and name.trim() != ''">
+			and name like CONCAT('%',#{name},'%')
+		</if>
+		<if test="company != null and company.trim() != ''">
+			and COMPANY_HEAD like CONCAT('%',#{company},'%')
+		</if>
+		<if test="providerId != null">
+			and PROVIDER_ID = #{providerId}
+		</if>
+		<if test="time1 != null and time1.trim() != ''">
+			and UPLOAD_TIME &gt;=#{time1}
+		</if>
+		<if test="time2 != null and time2.trim() != ''">
+			and UPLOAD_TIME &lt;= #{time2}
+		</if>
+		<if test="district != null and district.trim() != ''">
+			and district in(
+			select code from T_YUN_REGION
+			where code = #{district} and level =3
+			or code like CONCAT(substring((select code from T_YUN_REGION where code = #{district} and level =2),1,4),'%')
+			or code like CONCAT(substring((select code from T_YUN_REGION where code = #{district} and level =1),1,2),'%')
+			)
+		</if>
+		<if test="categoryId != null and categoryId.trim() != ''">
+			and CATEGORY_ID in(
+			select id from T_YUN_CATEGORY
+			where id = #{categoryId}
+			or parent in (select id from T_YUN_CATEGORY where id = #{categoryId})
+			)
+		</if>
+		<if test="member != null">
+			and id in(
+			select resource_id from T_YUN_RESOURCE_COLLECTION
+			where member_id = #{member}
+			)
+		</if>
+		<if test="productname != null and productname.trim() != ''">
+            and productnames like CONCAT('%',#{productname},'%')
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunResourceEntity">
+		<selectKey keyProperty="id" resultType="java.lang.String"
+				   order="BEFORE">
+			select replace(uuid(),'-','') from dual
+		</selectKey>
+		insert into T_YUN_RESOURCE
+		(
+			`ID`, 
+			`NAME`, 
+			`COMPANY_HEAD`, 
+			`SCALE`, 
+			`CATEGORY_ID`, 
+			`DESCRIPTION`, 
+			`URL`, 
+			`UPLOAD_TIME`, 
+			`DISTRICT`, 
+			`PROVIDER_ID`,
+            `DOWNLOADTIMES`,
+            `IS_PERMIT`
+		)
+		values
+		(
+			#{id}, 
+			#{name}, 
+			#{companyHead}, 
+			#{scale}, 
+			#{categoryId}, 
+			#{description}, 
+			#{url}, 
+			#{uploadTime}, 
+			#{district}, 
+			#{providerId},
+            #{downloadtimes},
+            #{isPermit}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunResourceEntity">
+		update T_YUN_RESOURCE 
+		<set>
+			<if test="name != null">`NAME` = #{name}, </if>
+			<if test="companyHead != null">`COMPANY_HEAD` = #{companyHead}, </if>
+			<if test="scale != null">`SCALE` = #{scale}, </if>
+			<if test="categoryId != null">`CATEGORY_ID` = #{categoryId}, </if>
+			<if test="description != null">`DESCRIPTION` = #{description}, </if>
+			<if test="url != null">`URL` = #{url}, </if>
+			<if test="uploadTime != null">`UPLOAD_TIME` = #{uploadTime}, </if>
+			<if test="district != null">`DISTRICT` = #{district}, </if>
+			<if test="providerId != null">`PROVIDER_ID` = #{providerId},</if>
+            <if test="downloadtimes != null">`DOWNLOADTIMES` = #{downloadtimes},</if>
+            <if test="isPermit != null">`IS_PERMIT` = #{isPermit}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_RESOURCE where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_RESOURCE where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

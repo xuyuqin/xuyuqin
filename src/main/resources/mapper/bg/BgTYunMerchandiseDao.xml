@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.unicall.bgyun.dao.BgTYunMerchandiseDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunMerchandiseEntity" id="tYunMerchandiseMap">
+        <result property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="price" column="PRICE"/>
+        <result property="isRecommend" column="IS_RECOMMEND"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="title" column="TITLE"/>
+        <result property="unit" column="UNIT"/>
+        <result property="number" column="NUMBER"/>
+        <result property="detail" column="DETAIL"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+        <result property="material" column="MATERIAL"/>
+        <result property="inSale" column="IN_SALE"/>
+        <result property="productId" column="PRODUCT_ID"/>
+        <result property="providerId" column="PROVIDER_ID"/>
+        <result property="qualityScore" column="QUALITY_SCORE"/>
+        <result property="priceScore" column="PRICE_SCORE"/>
+        <result property="serviceScore" column="SERVICE_SCORE"/>
+        <result property="subCategoryId" column="SUB_CATEGORY_ID"/>
+        <result property="categoryName" column="CATEGORY_NAME"/>
+        <result property="weight" column="WEIGHT"/>
+        <result property="saleNum" column="SALE_NUM"/>
+        <result property="price1" column="PRICE1"/>
+        <result property="price2" column="PRICE2"/>
+        <result property="price3" column="PRICE3"/>
+        <result property="price4" column="PRICE4"/>
+        <result property="price5" column="PRICE5"/>
+        <result property="spe" column="SPE"/>
+        <result property="isxhsp" column="isxhsp"/>
+        <result property="other" column="other"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunMerchandiseEntity">
+		select * from T_YUN_MERCHANDISE where ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yun.entity.TYunMerchandiseEntity">
+        select m.ID as id, m.NAME as name, m.PRICE as price, m.IS_RECOMMEND as isRecommend, m.NUMBER as number, m.IN_SALE as inSale,
+		     p.NAME as productId,m.CATEGORY_NAME as categoryName,c.NAME as subCategoryId, m.SALE_NUM as saleNum,
+		     m.PRICE1 as price1
+		      from T_YUN_MERCHANDISE m
+		        left JOIN T_YUN_PRODUCT p on m.PRODUCT_ID = p.ID
+		        left JOIN T_YUN_CATEGORY c on m.SUB_CATEGORY_ID = c.ID
+		        
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_MERCHANDISE 
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunMerchandiseEntity">
+		insert into T_YUN_MERCHANDISE
+		(
+			`ID`, 
+			`NAME`, 
+			`PRICE`, 
+			`IS_RECOMMEND`, 
+			`CREATE_TIME`, 
+			`TITLE`, 
+			`UNIT`, 
+			`NUMBER`, 
+			`DETAIL`, 
+			`UPDATE_TIME`, 
+			`MATERIAL`, 
+			`IN_SALE`, 
+			`PRODUCT_ID`, 
+			`PROVIDER_ID`, 
+			`QUALITY_SCORE`, 
+			`PRICE_SCORE`, 
+			`SERVICE_SCORE`, 
+			`SUB_CATEGORY_ID`, 
+			`CATEGORY_NAME`, 
+			`WEIGHT`, 
+			`SALE_NUM`, 
+			`PRICE1`, 
+			`PRICE2`, 
+			`PRICE3`, 
+			`PRICE4`, 
+			`PRICE5`, 
+			`SPE`, 
+			`isxhsp`, 
+			`other`
+		)
+		values
+		(
+			#{id}, 
+			#{name}, 
+			#{price}, 
+			#{isRecommend}, 
+			#{createTime}, 
+			#{title}, 
+			#{unit}, 
+			#{number}, 
+			#{detail}, 
+			#{updateTime}, 
+			#{material}, 
+			#{inSale}, 
+			#{productId}, 
+			#{providerId}, 
+			#{qualityScore}, 
+			#{priceScore}, 
+			#{serviceScore}, 
+			#{subCategoryId}, 
+			#{categoryName}, 
+			#{weight}, 
+			#{saleNum}, 
+			#{price1}, 
+			#{price2}, 
+			#{price3}, 
+			#{price4}, 
+			#{price5}, 
+			#{spe}, 
+			#{isxhsp}, 
+			#{other}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunMerchandiseEntity">
+		update T_YUN_MERCHANDISE 
+		<set>
+			<if test="name != null">`NAME` = #{name}, </if>
+			<if test="price != null">`PRICE` = #{price}, </if>
+			<if test="isRecommend != null">`IS_RECOMMEND` = #{isRecommend}, </if>
+			<if test="createTime != null">`CREATE_TIME` = #{createTime}, </if>
+			<if test="title != null">`TITLE` = #{title}, </if>
+			<if test="unit != null">`UNIT` = #{unit}, </if>
+			<if test="number != null">`NUMBER` = #{number}, </if>
+			<if test="detail != null">`DETAIL` = #{detail}, </if>
+			<if test="updateTime != null">`UPDATE_TIME` = #{updateTime}, </if>
+			<if test="material != null">`MATERIAL` = #{material}, </if>
+			<if test="inSale != null">`IN_SALE` = #{inSale}, </if>
+			<if test="productId != null">`PRODUCT_ID` = #{productId}, </if>
+			<if test="providerId != null">`PROVIDER_ID` = #{providerId}, </if>
+			<if test="qualityScore != null">`QUALITY_SCORE` = #{qualityScore}, </if>
+			<if test="priceScore != null">`PRICE_SCORE` = #{priceScore}, </if>
+			<if test="serviceScore != null">`SERVICE_SCORE` = #{serviceScore}, </if>
+			<if test="subCategoryId != null">`SUB_CATEGORY_ID` = #{subCategoryId}, </if>
+			<if test="categoryName != null">`CATEGORY_NAME` = #{categoryName}, </if>
+			<if test="weight != null">`WEIGHT` = #{weight}, </if>
+			<if test="saleNum != null">`SALE_NUM` = #{saleNum}, </if>
+			<if test="price1 != null">`PRICE1` = #{price1}, </if>
+			<if test="price2 != null">`PRICE2` = #{price2}, </if>
+			<if test="price3 != null">`PRICE3` = #{price3}, </if>
+			<if test="price4 != null">`PRICE4` = #{price4}, </if>
+			<if test="price5 != null">`PRICE5` = #{price5}, </if>
+			<if test="spe != null">`SPE` = #{spe}, </if>
+			<if test="isxhsp != null">`isxhsp` = #{isxhsp}, </if>
+			<if test="other != null">`other` = #{other}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_MERCHANDISE where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_MERCHANDISE where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

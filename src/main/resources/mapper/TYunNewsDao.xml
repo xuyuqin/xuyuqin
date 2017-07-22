@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunNewsDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunNewsEntity" id="tYunNewsMap">
+        <result property="id" column="ID"/>
+        <result property="title" column="TITLE"/>
+        <result property="summary" column="SUMMARY"/>
+        <result property="content" column="CONTENT"/>
+        <result property="posttime" column="POSTTIME"/>
+        <result property="category" column="CATEGORY"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunNewsEntity">
+		select * from T_YUN_NEWS where ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yun.entity.TYunNewsEntity">
+		select * from T_YUN_NEWS
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by ID desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_NEWS 
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunNewsEntity">
+		insert into T_YUN_NEWS
+		(
+			`ID`, 
+			`TITLE`, 
+			`SUMMARY`, 
+			`CONTENT`, 
+			`POSTTIME`, 
+			`CATEGORY`
+		)
+		values
+		(
+			#{id}, 
+			#{title}, 
+			#{summary}, 
+			#{content}, 
+			#{posttime}, 
+			#{category}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunNewsEntity">
+		update T_YUN_NEWS 
+		<set>
+			<if test="title != null">`TITLE` = #{title}, </if>
+			<if test="summary != null">`SUMMARY` = #{summary}, </if>
+			<if test="content != null">`CONTENT` = #{content}, </if>
+			<if test="posttime != null">`POSTTIME` = #{posttime}, </if>
+			<if test="category != null">`CATEGORY` = #{category}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_NEWS where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_NEWS where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

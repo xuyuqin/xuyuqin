@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunProviderDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunProviderEntity" id="tYunProviderMap">
+        <result property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="logo" column="LOGO"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="contactName" column="CONTACT_NAME"/>
+        <result property="contactPhone" column="CONTACT_PHONE"/>
+        <result property="contactAddress" column="CONTACT_ADDRESS"/>
+		<result property="contactIdnum" column="CONTACT_IDNUM"/>
+        <result property="qualityScore" column="QUALITY_SCORE"/>
+        <result property="priceScore" column="PRICE_SCORE"/>
+        <result property="serviceScore" column="SERVICE_SCORE"/>
+        <result property="region" column="REGION"/>
+		<result property="file" column="FILE"/>
+		<result property="type" column="TYPE"/>
+        <result property="isCollection" column="isCollection"/>
+		<association property="productNames" column="ID" select="getProductnames"/>
+        <association property="productIds" column="ID" select="getProductIds"/>
+        <association property="districtname" column="REGION" select="getDistrictname"/>
+    </resultMap>
+
+    <select id="getDistrictname" parameterType="String" resultType="String">
+        select name
+        from T_YUN_REGION
+        where code = #{code}
+    </select>
+
+    <select id="getProductIds" parameterType="String" resultType="String">
+        select group_concat(a.product_id)
+        from T_YUN_PROVIDER_PRODUCT a
+        where a.provider_id = #{value}
+    </select>
+
+	<select id="getProductnames" parameterType="String" resultType="String">
+		select group_concat(b.name)
+		from T_YUN_PROVIDER_PRODUCT a
+		left join T_YUN_PRODUCT b on a.product_id = b.id
+		where a.provider_id = #{value}
+	</select>
+
+	<select id="queryObject" resultMap="tYunProviderMap">
+		select * from T_YUN_PROVIDER where ID = #{value}
+	</select>
+
+	<select id="findByMemberId" resultMap="tYunProviderMap">
+		select * from T_YUN_PROVIDER where MEMBER_ID = #{value}
+	</select>
+
+	<select id="getProvider" resultType="io.yun.dto.BaikeIndexDto">
+		select a.name as prividerName,b.price as prividerPrice
+		from T_YUN_PROVIDER a
+		left join T_YUN_PROVIDER_PRODUCT b
+           on a.id=b.provider_id
+            where b.product_id = #{value}
+	</select>
+
+	<select id="getProviderId" resultType="io.yun.entity.TYunProviderEntity">
+		select provider_id as id
+		from T_YUN_PROVIDER_PRODUCT
+		where product_id = #{product_id}
+	</select>
+
+	<select id="providerList" resultType="io.yun.dto.ProviderDto">
+		select id,name,CONTACT_ADDRESS as districtname,(PRICE_SCORE+QUALITY_SCORE+SERVICE_SCORE)/3 as score
+		from T_YUN_PROVIDER
+		where ID = #{providerId}
+	</select>
+
+	<select id="queryList" resultMap="tYunProviderMap">
+		select DISTINCT A.*,(select count(*) from T_YUN_PROVIDER_COLLECTION where provider_id=A.id and member_id = #{member}) isCollection
+		from T_YUN_PROVIDER A
+		left join T_YUN_PROVIDER_COLLECTION B on A.ID = B.PROVIDER_ID
+		where 1 = 1
+		<if test="memberId != null">
+			and B.MEMBER_ID = #{memberId}
+		</if>
+        <if test="keyword != null and keyword.trim() != ''">
+            and A.NAME LIKE CONCAT('%',#{keyword},'%')
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(DISTINCT A.id)
+        from T_YUN_PROVIDER A
+        left join T_YUN_PROVIDER_COLLECTION B on A.ID = B.PROVIDER_ID
+        where 1 = 1
+        <if test="memberId != null">
+            and B.MEMBER_ID = #{memberId}
+        </if>
+        <if test="keyword != null and keyword.trim() != ''">
+            and A.NAME LIKE CONCAT('%',#{keyword},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunProviderEntity">
+		<selectKey keyProperty="id" resultType="java.lang.String"
+				   order="BEFORE">
+			select replace(uuid(),'-','') from dual
+		</selectKey>
+		insert into T_YUN_PROVIDER
+		(
+			`ID`, 
+			`NAME`, 
+			`LOGO`, 
+			`MEMBER_ID`, 
+			`CONTACT_NAME`, 
+			`CONTACT_PHONE`, 
+			`CONTACT_ADDRESS`,
+            `CONTACT_IDNUM`,
+			`PROFILE`,
+-- 			`QUALITY_SCORE`,
+-- 			`PRICE_SCORE`,
+-- 			`SERVICE_SCORE`,
+			`REGION`,
+			`FILE`,
+			`TYPE`
+		)
+		values
+		(
+			#{id}, 
+			#{name}, 
+			#{logo}, 
+			#{memberId}, 
+			#{contactName}, 
+			#{contactPhone}, 
+			#{contactAddress},
+            #{contactIdnum},
+			#{profile},
+-- 			#{qualityScore},
+-- 			#{priceScore},
+-- 			#{serviceScore},
+			#{region},
+			#{file},
+			#{type}
+		)
+	</insert>
+
+    <insert id="saveProduct">
+        <selectKey keyProperty="id" resultType="java.lang.String"
+                   order="BEFORE">
+            select replace(uuid(),'-','') from dual
+        </selectKey>
+        insert into T_YUN_PROVIDER_PRODUCT
+        (
+        `ID`,
+        `PROVIDER_ID`,
+        `PRODUCT_ID`
+        )
+        values
+        (
+        #{id},
+        #{providerId},
+        #{productId}
+        )
+    </insert>
+
+	<update id="update" parameterType="io.yun.entity.TYunProviderEntity">
+		update T_YUN_PROVIDER 
+		<set>
+			<if test="name != null">`NAME` = #{name}, </if>
+			<if test="logo != null">`LOGO` = #{logo}, </if>
+			<!--<if test="memberId != null">`MEMBER_ID` = #{memberId}, </if>-->
+			<if test="contactName != null">`CONTACT_NAME` = #{contactName}, </if>
+			<if test="contactPhone != null">`CONTACT_PHONE` = #{contactPhone}, </if>
+			<if test="contactAddress != null">`CONTACT_ADDRESS` = #{contactAddress}, </if>
+            <!--<if test="contactIdnum != null">`CONTACT_IDNUM` = #{contactAddress}, </if>-->
+			<if test="profile != null">`PROFILE` = #{profile}, </if>
+			<!--<if test="qualityScore != null">`QUALITY_SCORE` = #{qualityScore}, </if>-->
+			<!--<if test="priceScore != null">`PRICE_SCORE` = #{priceScore}, </if>-->
+			<!--<if test="serviceScore != null">`SERVICE_SCORE` = #{serviceScore}, </if>-->
+			<!--<if test="region != null">`REGION` = #{region},</if>-->
+			<!--<if test="file != null">`FILE` = #{region},</if>-->
+			<!--<if test="type != null">`TYPE` = #{region}</if>-->
+		</set>
+		where ID = #{id}
+	</update>
+
+	<delete id="delete">
+		delete from T_YUN_PROVIDER where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_PROVIDER where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<delete id="deleteProduct">
+		delete from T_YUN_PROVIDER_PRODUCT
+        where provider_id = #{providerId}
+        and product_id in
+		<foreach item="it" collection="productId" open="(" separator="," close=")">
+			#{it}
+		</foreach>
+	</delete>
+
+	<select id="getHomeProvider" resultType="io.yun.dto.HomeProviderDto">
+	select ID, LOGO
+	from T_YUN_PROVIDER A
+	<choose>
+		<when test="sidx != null and sidx.trim() != ''">
+			order by ${sidx} ${order}
+		</when>
+	</choose>
+	<if test="offset != null and limit != null">
+		limit #{offset}, #{limit}
+	</if>
+	</select>
+</mapper>

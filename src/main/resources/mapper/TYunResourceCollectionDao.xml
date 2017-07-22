@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunResourceCollectionDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunResourceCollectionEntity" id="tYunResourceCollectionMap">
+        <result property="id" column="ID"/>
+        <result property="resourceId" column="RESOURCE_ID"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="createTime" column="CREATE_TIME"/>
+    </resultMap>
+
+	<select id="find" resultType="io.yun.entity.TYunResourceCollectionEntity">
+		select * from T_YUN_RESOURCE_COLLECTION where MEMBER_ID = #{memberid} and RESOURCE_ID = #{resourceid}
+	</select>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunResourceCollectionEntity">
+		select * from T_YUN_RESOURCE_COLLECTION where ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yun.entity.TYunResourceCollectionEntity">
+		select * from T_YUN_RESOURCE_COLLECTION
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by ID desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_RESOURCE_COLLECTION 
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunResourceCollectionEntity">
+		<selectKey keyProperty="id" resultType="java.lang.String"
+				   order="BEFORE">
+			select replace(uuid(),'-','') from dual
+		</selectKey>
+		insert into T_YUN_RESOURCE_COLLECTION
+		(
+			`ID`, 
+			`RESOURCE_ID`, 
+			`MEMBER_ID`, 
+			`CREATE_TIME`
+		)
+		values
+		(
+			#{id}, 
+			#{resourceId}, 
+			#{memberId}, 
+			#{createTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunResourceCollectionEntity">
+		update T_YUN_RESOURCE_COLLECTION 
+		<set>
+			<if test="resourceId != null">`RESOURCE_ID` = #{resourceId}, </if>
+			<if test="memberId != null">`MEMBER_ID` = #{memberId}, </if>
+			<if test="createTime != null">`CREATE_TIME` = #{createTime}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_RESOURCE_COLLECTION where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_RESOURCE_COLLECTION where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

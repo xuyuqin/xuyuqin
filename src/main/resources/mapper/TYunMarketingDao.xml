@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunMarketingDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunMarketingEntity" id="tYunMarketingMap">
+        <result property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="marketingType" column="MARKETING_TYPE"/>
+        <result property="discount" column="DISCOUNT"/>
+        <result property="fulfilAmount" column="FULFIL_AMOUNT"/>
+        <result property="reduceAmount" column="REDUCE_AMOUNT"/>
+        <result property="providerId" column="PROVIDER_ID"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+        <result property="status" column="STATUS"/>
+        <result property="startTime" column="START_TIME"/>
+        <result property="endTime" column="END_TIME"/>
+        <association property="merchandiseIds" column="ID" select="getMerchandiseIds"/>
+        <association property="merchandiseNames" column="ID" select="getMerchandiseNames"/>
+    </resultMap>
+
+    <select id="getMerchandiseNames" parameterType="String" resultType="String">
+        select group_concat(b.name)
+		from T_YUN_MARKETING_MERCHANDISE a
+		left join T_YUN_MERCHANDISE b on a.MERCHANDISE_ID = b.ID
+		where a.MARKETING_ID = #{value}
+    </select>
+
+    <select id="getMerchandiseIds" parameterType="String" resultType="String">
+        select group_concat(a.MERCHANDISE_ID)
+        from T_YUN_MARKETING_MERCHANDISE a
+        where a.MARKETING_ID = #{value}
+    </select>
+
+	<select id="queryObject" resultMap="tYunMarketingMap">
+		select *  ,(case
+					when END_TIME > (select now()) then '进行中'
+					else '已结束' END )  as STATUS
+		from T_YUN_MARKETING where ID = #{value}
+	</select>
+
+	<select id="queryList" resultMap="tYunMarketingMap">
+		select * ,(case
+					when END_TIME > (select now()) then '进行中'
+					else '已结束' END )  as STATUS
+		from T_YUN_MARKETING
+		<where>
+			<if test="memberId != null and memberId.trim() != ''">
+				and provider_id = (select id FROM T_YUN_PROVIDER WHERE member_id = #{memberId})
+			</if>
+		</where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+			</when>
+			<otherwise>
+				ORDER BY CREATE_TIME DESC
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryStatus" resultType="java.util.HashMap">
+		SELECT
+		(
+		CASE
+		WHEN END_TIME > (SELECT now()) THEN
+		'进行中'
+		ELSE
+		'已结束'
+		END
+		) AS status,
+		count(*) as num
+		from T_YUN_MARKETING
+		<where>
+			<if test="memberId != null and memberId.trim() != ''">
+				and provider_id = (select id FROM T_YUN_PROVIDER WHERE member_id = #{memberId})
+			</if>
+		</where>
+		GROUP BY STATUS
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from T_YUN_MARKETING
+		<where>
+			<if test="memberId != null and memberId.trim() != ''">
+				and provider_id = (select id FROM T_YUN_PROVIDER WHERE member_id = #{memberId})
+			</if>
+		</where>
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunMarketingEntity">
+		insert into T_YUN_MARKETING
+		(
+			`ID`, 
+			`NAME`, 
+			`MARKETING_TYPE`, 
+			`DISCOUNT`, 
+			`FULFIL_AMOUNT`, 
+			`REDUCE_AMOUNT`, 
+			`PROVIDER_ID`, 
+			`CREATE_TIME`, 
+			`UPDATE_TIME`,
+			`START_TIME`, 
+			`END_TIME`
+		)
+		values
+		(
+			#{id}, 
+			#{name}, 
+			#{marketingType}, 
+			#{discount}, 
+			#{fulfilAmount}, 
+			#{reduceAmount}, 
+			#{providerId}, 
+			#{createTime}, 
+			#{updateTime},
+			#{startTime}, 
+			#{endTime}
+		)
+	</insert>
+
+	<insert id="saveMerchandise">
+		<selectKey keyProperty="id" resultType="java.lang.String"
+				   order="BEFORE">
+			select replace(uuid(),'-','') from dual
+		</selectKey>
+		insert into T_YUN_MARKETING_MERCHANDISE
+		(
+		`ID`,
+		`MARKETING_ID`,
+		`MERCHANDISE_ID`
+		)
+		values
+		(
+		#{id},
+		#{marketingId},
+		#{merchandiseId}
+		)
+	</insert>
+
+	<update id="update" parameterType="io.yun.entity.TYunMarketingEntity">
+		update T_YUN_MARKETING 
+		<set>
+			<if test="name != null">`NAME` = #{name}, </if>
+			<if test="marketingType != null">`MARKETING_TYPE` = #{marketingType}, </if>
+			<if test="discount != null">`DISCOUNT` = #{discount}, </if>
+			<if test="fulfilAmount != null">`FULFIL_AMOUNT` = #{fulfilAmount}, </if>
+			<if test="reduceAmount != null">`REDUCE_AMOUNT` = #{reduceAmount}, </if>
+			<if test="providerId != null">`PROVIDER_ID` = #{providerId}, </if>
+			<if test="createTime != null">`CREATE_TIME` = #{createTime}, </if>
+			<if test="updateTime != null">`UPDATE_TIME` = #{updateTime}, </if>
+			<if test="startTime != null">`START_TIME` = #{startTime}, </if>
+			<if test="endTime != null">`END_TIME` = #{endTime}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_MARKETING where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_MARKETING where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<delete id="deleteMerchandise">
+		delete from T_YUN_MARKETING_MERCHANDISE
+		where marketing_id = #{marketingId}
+		and MERCHANDISE_ID in
+		<foreach item="it" collection="merchandiseIds" open="(" separator="," close=")">
+			#{it}
+		</foreach>
+	</delete>
+
+	<delete id="deleteAllMerchandise">
+		delete from T_YUN_MARKETING_MERCHANDISE
+		where marketing_id = #{VALUE}
+	</delete>
+
+</mapper>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunProductDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunProductEntity" id="tYunProductMap">
+        <result property="id" column="ID"/>
+        <result property="material" column="MATERIAL"/>
+        <result property="unit" column="UNIT"/>
+        <result property="price" column="PRICE"/>
+        <result property="editTime" column="EDIT_TIME"/>
+        <result property="name" column="NAME"/>
+		<result property="subCategoryName" column="SUBCATEGORYNAME"/>
+		<result property="categoryName" column="CATEGORYNAME"/>
+        <result property="hotSearch" column="HOT_SEARCH"/>
+		<result property="aliasName" column="ALIAS_NAME"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunProductEntity">
+		select * from T_YUN_PRODUCT where ID = #{value}
+	</select>
+
+	<select id="getProduct" resultType="io.yun.dto.BaikeIndexDto">
+		select * from T_YUN_PRODUCT where ID = #{value}
+	</select>
+
+	<select id="getProductImg" resultType="io.yun.dto.BaikeDetailsDto">
+		select url from T_YUN_PRODUCT_IMAGE where PRODUCT_ID = #{productid}
+	</select>
+
+	<select id="getProductmodule" resultType="io.yun.dto.BaikeDetailsDto">
+		select moduleContent from T_YUN_MODULECONTENT where PRODUCT_ID = #{productid}
+	</select>
+
+	<select id="getDownProduct" resultType="io.yun.dto.BaikeDetailsDto">
+		select id,name as downName from T_YUN_PRODUCT
+		<where>
+		<if test="upname != null">
+			and `UP_NAME` like CONCAT('%', #{upname},'%')
+		</if>
+		</where>
+	</select>
+
+	<select id="queryList" resultMap="tYunProductMap">
+		select  *
+		FROM T_YUN_PRODUCT A
+		<where>
+		<if test="keyword != null and keyword.trim() != ''">
+			and (
+                name like CONCAT(CONCAT('%', #{keyword}),'%')
+             or subcategoryname like CONCAT(CONCAT('%', #{keyword}),'%')
+             or categoryname like CONCAT(CONCAT('%', #{keyword}),'%')
+            )
+		</if>
+		</where>
+	</select>
+
+	<select id="hotList" resultMap="tYunProductMap">
+		select  *
+		FROM T_YUN_PRODUCT A
+        WHERE A.HOT_SEARCH='1'
+	</select>
+
+	<select id="baikeList" resultMap="tYunProductMap">
+		select  *
+		FROM T_YUN_PRODUCT A
+		<where>
+			<if test="hotSearch != null and hotSearch.trim() != ''">
+				and `HOT_SEARCH` =#{hotSearch}
+			</if>
+			<if test="aliasName != null and aliasName.trim() != ''">
+				and `ALIAS_NAME` like concat('%',#{aliasName},'%')
+			</if>
+			<if test="category != null and category.trim() != ''">
+				and `CATEGORYNAME` =#{category}
+			</if>
+			<if test="subCategoryName != null and subCategoryName.trim() != ''">
+				and `SUBCATEGORYNAME` =#{subCategoryName}
+			</if>
+			<if test="name != null and name.trim() != ''">
+				and `UP_NAME` like concat('%',#{name},'%')
+			</if>
+		</where>
+	</select>
+
+	<select id="nameList" resultMap="tYunProductMap">
+		select  *
+		FROM T_YUN_PRODUCT A
+		where A.`ALIAS_NAME`!=''
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryTotal" resultType="int">
+		select count(*)
+		FROM T_YUN_PRODUCT A
+		<where>
+            <if test="keyword != null and keyword.trim() != ''">
+                and (
+                name like CONCAT(CONCAT('%', #{keyword}),'%')
+                or subcategoryname like CONCAT(CONCAT('%', #{keyword}),'%')
+                or categoryname like CONCAT(CONCAT('%', #{keyword}),'%')
+                )
+            </if>
+		</where>
+	</select>
+
+	<select id="baikeTotal" resultType="int">
+		select count(*)
+		FROM T_YUN_PRODUCT A
+		<where>
+			<if test="hotSearch != null and hotSearch.trim() != ''">
+				and `HOT_SEARCH` =#{hotSearch}
+			</if>
+			<if test="aliasName != null and aliasName.trim() != ''">
+				and `ALIAS_NAME` like concat('%',#{aliasName},'%')
+			</if>
+			<if test="category != null and category.trim() != ''">
+				and `CATEGORYNAME` =#{category}
+			</if>
+			<if test="subCategoryName != null and subCategoryName.trim() != ''">
+				and `SUBCATEGORYNAME` =#{subCategoryName}
+			</if>
+		</where>
+	</select>
+
+	<select id="nameTotal" resultType="int">
+		select  count(*)
+		FROM T_YUN_PRODUCT A
+		where A.`ALIAS_NAME`!=''
+	</select>
+
+	<insert id="save" parameterType="io.yun.entity.TYunProductEntity">
+		insert into T_YUN_PRODUCT
+		(
+			`ID`,
+			`MATERIAL`, 
+			`UNIT`, 
+			`PRICE`, 
+			`EDIT_TIME`, 
+			`NAME`
+		)
+		values
+		(
+			#{id},
+			#{material}, 
+			#{unit}, 
+			#{price}, 
+			#{editTime}, 
+			#{name}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunProductEntity">
+		update T_YUN_PRODUCT 
+		<set>
+			<if test="material != null">`MATERIAL` = #{material}, </if>
+			<if test="unit != null">`UNIT` = #{unit}, </if>
+			<if test="price != null">`PRICE` = #{price}, </if>
+			<if test="editTime != null">`EDIT_TIME` = #{editTime}, </if>
+			<if test="name != null">`NAME` = #{name}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_PRODUCT where ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_PRODUCT where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

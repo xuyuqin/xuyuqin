@@ -1,0 +1,94 @@
+.rightContent .supplierInfo{
+    float: left;
+    width:48%;
+}
+.rightContent .supplierInfo .col-sm-9{
+    width:67%;
+}
+.rightContent .supplierInfo .col-sm-2{
+    width:33%;
+}
+.rightContent .supplierInfo .imgArea{
+    width:28%;
+    float: left;
+    text-align: center;
+}
+.rightContent .supplierInfo .form-group{
+    float: right;
+    width: 78%;
+}
+.rightContent .supplierInfo .form-group label{
+    float: left;
+}
+.rightContent .supplierScore{
+    float: right;
+    width:48%;
+}
+.rightContent .supplierScore li{
+    float: left;
+}
+.rightContent .supplierScore .quality{
+    float: left;
+    height: 50px;
+    line-height: 50px;
+
+}
+.rightContent .supplierScore .price{
+    float: left;
+    height: 50px;
+    clear: left;
+    line-height: 50px;
+    margin-top: 10px;
+}
+.rightContent .supplierScore .service{
+    float: left;
+    height: 50px;
+    clear: left;
+    line-height: 50px;    margin-top: 10px;
+}
+.rightContent .supplierScore .score{
+    height: 150px;
+}
+.rightContent .supplierScore .score div{
+    height: 50px;
+    float: left;
+    width: 288px;
+    background-size: cover;
+    margin-left: 22px;
+}
+
+.rightContent .recently{
+    margin-top: 10px;
+    clear: left;
+}
+.rightContent .recently .title{
+    float: left;
+    clear: left;
+}
+.rightContent .recently .yuan{
+    float: left;
+    font-size: 20px;
+    color: #F44336;
+    margin-left: 10px;
+}
+.rightContent .recently .num{
+    float: left;
+    margin-left: 5px;
+    font-size: 20px;
+    color: #F44336;
+}
+.rightContent .recently .unit{
+    float: left;
+    margin-left: 10px;
+}
+.rightContent .recently label{
+    line-height: 28px;
+}
+#supplierForm .logo{
+    width:100%;
+    margin:auto;
+    border: 1px solid #aaa;
+}
+#sublogo{
+    margin-top: 10px;
+}

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yun.dao.TYunDemandReplyDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yun.entity.TYunDemandReplyEntity" id="tYunDemandReplyMap">
+        <result property="id" column="ID"/>
+        <result property="demandId" column="DEMAND_ID"/>
+        <result property="priceType" column="PRICE_TYPE"/>
+        <result property="price" column="PRICE"/>
+        <result property="providerId" column="PROVIDER_ID"/>
+        <result property="contract" column="CONTRACT"/>
+        <result property="phone" column="PHONE"/>
+        <result property="remarks" column="REMARKS"/>
+        <result property="createTime" column="CREATE_TIME"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.yun.entity.TYunDemandReplyEntity">
+		select * from T_YUN_DEMAND_REPLY where ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yun.entity.TYunDemandReplyEntity">
+		SELECT
+		B.*
+		FROM
+		T_YUN_DEMAND A
+		LEFT JOIN T_YUN_DEMAND_REPLY B ON A.ID = B.DEMAND_ID
+		<where>
+			<if test="memberId != null">
+				and B.`PROVIDER_ID` = #{memberId}
+			</if>
+			<if test="demandId != null  and demandId.trim() != ''">
+				and B.`DEMAND_ID` = #{demandId}
+			</if>
+		</where>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) FROM
+		T_YUN_DEMAND A
+		LEFT JOIN T_YUN_DEMAND_REPLY B ON A.ID = B.DEMAND_ID
+		<where>
+			<if test="memberId != null">
+				and B.`PROVIDER_ID` = #{memberId}
+			</if>
+			<if test="demandId != null  and demandId.trim() != ''">
+				and B.`DEMAND_ID` = #{demandId}
+			</if>
+		</where>
+	</select>
+	 
+	<insert id="save" parameterType="io.yun.entity.TYunDemandReplyEntity">
+		<selectKey keyProperty="id" resultType="java.lang.String"
+				   order="BEFORE">
+			select replace(uuid(),'-','') from dual
+		</selectKey>
+		insert into T_YUN_DEMAND_REPLY
+		(
+			`ID`, 
+			`DEMAND_ID`, 
+			`PRICE_TYPE`, 
+			`PRICE`, 
+			`PROVIDER_ID`, 
+			`CONTRACT`, 
+			`PHONE`, 
+			`REMARKS`, 
+			`CREATE_TIME`
+		)
+		values
+		(
+			#{id}, 
+			#{demandId}, 
+			#{priceType}, 
+			#{price}, 
+			#{providerId}, 
+			#{contract}, 
+			#{phone}, 
+			#{remarks}, 
+			#{createTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yun.entity.TYunDemandReplyEntity">
+		update T_YUN_DEMAND_REPLY 
+		<set>
+			<if test="priceType != null">`PRICE_TYPE` = #{priceType}, </if>
+			<if test="price != null">`PRICE` = #{price}, </if>
+			<if test="providerId != null">`PROVIDER_ID` = #{providerId}, </if>
+			<if test="contract != null">`CONTRACT` = #{contract}, </if>
+			<if test="phone != null">`PHONE` = #{phone}, </if>
+			<if test="remarks != null">`REMARKS` = #{remarks}, </if>
+			<if test="createTime != null">`CREATE_TIME` = #{createTime}</if>
+		</set>
+		where DEMAND_ID = #{demandId}
+	</update>
+	
+	<delete id="delete">
+		delete from T_YUN_DEMAND_REPLY where DEMAND_ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from T_YUN_DEMAND_REPLY where ID in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>
