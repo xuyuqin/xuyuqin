@@ -1,4 +1,4 @@
-package io.unicall.bgyun.controller;
+﻿package io.unicall.bgyun.controller;
 
 import io.unicall.bgyun.entity.BgTYunOrderEntity;
 import io.unicall.bgyun.entity.BgTYunProductEntity;
@@ -51,6 +51,7 @@ public class BgTYunOrderController {
 		PageUtils pageUtil = new PageUtils(l, total, query.getLimit(), query.getPage());
 		
 		return R.ok().put("page", pageUtil);
+
 
 	}
 
